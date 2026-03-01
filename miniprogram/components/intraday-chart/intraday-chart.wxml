@@ -1,0 +1,32 @@
+<!-- components/intraday-chart/intraday-chart.wxml -->
+<view wx:if="{{chartData}}" class="intraday-chart-container">
+  <view class="chart-header">
+    <text class="chart-title">今日分时</text>
+    <text class="chart-update">{{updateTime}}</text>
+  </view>
+  
+  <canvas 
+    canvas-id="intradayChart{{canvasId}}" 
+    id="intradayChart{{canvasId}}"
+    class="intraday-canvas"
+    style="width: {{width}}px; height: {{height}}px;"
+    bindtouchstart="onTouchStart"
+    bindtouchmove="onTouchMove"
+    bindtouchend="onTouchEnd"
+  ></canvas>
+  
+  <!-- 悬浮提示 -->
+  <view wx:if="{{tooltipVisible}}" 
+    class="chart-tooltip" 
+    style="left: {{tooltipX}}px; top: {{tooltipY}}px;"
+  >
+    <view class="tooltip-time">{{tooltipTime}}</view>
+    <view class="tooltip-value {{tooltipPercent >= 0 ? 'rise' : 'fall'}}">
+      {{tooltipPercent >= 0 ? '+' : ''}}{{tooltipPercent}}%
+    </view>
+  </view>
+</view>
+
+<view wx:else class="chart-empty">
+  <text class="empty-text">暂无分时数据</text>
+</view>

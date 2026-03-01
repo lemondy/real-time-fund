@@ -1,0 +1,82 @@
+<!-- pages/my/my.wxml -->
+<view class="my-container">
+  <!-- 用户信息区域 -->
+  <view class="glass user-section">
+    <view wx:if="{{hasUserInfo}}" class="user-info-box">
+      <image class="avatar" src="{{userInfo.avatarUrl}}" mode="aspectFill"></image>
+      <view class="user-detail">
+        <text class="nickname">{{userInfo.nickName}}</text>
+        <text class="user-id">ID: {{openid}}</text>
+      </view>
+      <!-- 如果是默认用户信息，显示更新按钮 -->
+      <button wx:if="{{userInfo.nickName === '微信用户'}}" class="btn-update-info" bindtap="updateUserInfo">
+        更新信息
+      </button>
+    </view>
+    <view wx:else class="login-prompt" bindtap="goToLogin">
+      <image class="avatar-default" src="/images/user-default.png" mode="aspectFit"></image>
+      <view class="login-text">
+        <text class="login-title">点击登录</text>
+        <text class="login-desc">登录后数据云端同步</text>
+      </view>
+      <text class="arrow">›</text>
+    </view>
+  </view>
+
+  <!-- 数据统计 -->
+  <view class="glass stats-section">
+    <view class="stat-item">
+      <text class="stat-value">{{fundCount}}</text>
+      <text class="stat-label">关注基金</text>
+    </view>
+    <view class="divider"></view>
+    <view class="stat-item">
+      <text class="stat-value">{{favoriteCount}}</text>
+      <text class="stat-label">自选基金</text>
+    </view>
+    <view class="divider"></view>
+    <view class="stat-item">
+      <text class="stat-value">{{totalValue}}</text>
+      <text class="stat-label">总估值(元)</text>
+    </view>
+  </view>
+
+  <!-- 功能菜单 -->
+  <view class="glass menu-section">
+    <view class="menu-item" bindtap="handleSync">
+      <view class="menu-left">
+        <text class="menu-icon">☁️</text>
+        <text class="menu-text">数据同步</text>
+      </view>
+      <text class="arrow">›</text>
+    </view>
+    <view class="menu-divider"></view>
+    
+    <view class="menu-item" bindtap="handleClearCache">
+      <view class="menu-left">
+        <text class="menu-icon">🗑️</text>
+        <text class="menu-text">清除缓存</text>
+      </view>
+      <text class="arrow">›</text>
+    </view>
+    <view class="menu-divider"></view>
+    
+    <view class="menu-item" bindtap="handleAbout">
+      <view class="menu-left">
+        <text class="menu-icon">ℹ️</text>
+        <text class="menu-text">关于我们</text>
+      </view>
+      <text class="arrow">›</text>
+    </view>
+  </view>
+
+  <!-- 退出登录 -->
+  <view wx:if="{{hasUserInfo}}" class="logout-section">
+    <button class="logout-btn" bindtap="handleLogout">退出登录</button>
+  </view>
+
+  <!-- 版本信息 -->
+  <view class="version-info">
+    <text class="version-text">基民眼 v{{version}}</text>
+  </view>
+</view>

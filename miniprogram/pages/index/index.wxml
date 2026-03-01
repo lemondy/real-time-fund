@@ -1,0 +1,227 @@
+<!-- pages/index/index.wxml -->
+<view class="index-container">
+  <!-- 头部搜索区域 -->
+  <view class="glass search-section">
+    <view class="search-box">
+      <input 
+        class="search-input" 
+        placeholder="输入基金代码或名称搜索" 
+        value="{{searchKeyword}}"
+        bindinput="onSearchInput"
+        bindconfirm="handleSearch"
+      />
+      <view class="search-btn" bindtap="handleSearch">
+        <text class="search-icon">🔍</text>
+      </view>
+    </view>
+
+    <!-- 搜索结果 -->
+    <view wx:if="{{searchResults.length > 0}}" class="search-results">
+      <scroll-view scroll-y class="results-list">
+        <view 
+          wx:for="{{searchResults}}" 
+          wx:key="code" 
+          class="result-item"
+          bindtap="handleAddFund"
+          data-fund="{{item}}"
+        >
+          <view class="result-info">
+            <text class="result-code">{{item.code}}</text>
+            <text class="result-name">{{item.name}}</text>
+          </view>
+          <text class="add-icon">+</text>
+        </view>
+      </scroll-view>
+    </view>
+  </view>
+
+  <!-- Tab切换 -->
+  <view class="glass tab-section">
+    <view 
+      class="tab-item {{currentTab === 0 ? 'active' : ''}}"
+      bindtap="switchTab"
+      data-tab="0"
+    >
+      <text>全部({{allCount}})</text>
+    </view>
+    <view 
+      class="tab-item {{currentTab === 1 ? 'active' : ''}}"
+      bindtap="switchTab"
+      data-tab="1"
+    >
+      <text>自选({{favoriteCount}})</text>
+    </view>
+  </view>
+
+  <!-- 操作按钮 -->
+  <view class="action-bar">
+    <view class="action-left">
+      <view class="refresh-btn" bindtap="handleRefresh">
+        <text class="{{refreshing ? 'rotating' : ''}}">🔄</text>
+        <text class="btn-text">刷新</text>
+      </view>
+    </view>
+    <view class="action-right">
+      <view class="settings-btn" bindtap="showSettingsModal">
+        <text>⚙️</text>
+        <text class="btn-text">设置</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 基金列表 -->
+  <scroll-view 
+    scroll-y 
+    class="fund-list"
+    refresher-enabled="{{true}}"
+    refresher-triggered="{{refreshing}}"
+    bindrefresherrefresh="handleRefresh"
+  >
+    <view wx:if="{{displayFunds.length === 0}}" class="empty-state">
+      <text class="empty-icon">📊</text>
+      <text class="empty-text">{{currentTab === 0 ? '还没有添加基金' : '还没有自选基金'}}</text>
+      <text class="empty-hint">在上方搜索栏添加基金</text>
+    </view>
+
+    <view 
+      wx:for="{{displayFunds}}" 
+      wx:key="code" 
+      class="glass fund-card"
+      bindtap="showFundDetail"
+      data-fund="{{item}}"
+    >
+      <!-- 基金头部 -->
+      <view class="fund-header">
+        <view class="fund-info">
+          <text class="fund-name">{{item.name}}</text>
+          <text class="fund-code">{{item.code}}</text>
+        </view>
+        <view class="fund-actions">
+          <view 
+            class="action-icon favorite-icon {{item.favorite ? 'active' : ''}}"
+            catchtap="toggleFavorite"
+            data-code="{{item.code}}"
+          >
+            <text>{{item.favorite ? '★' : '☆'}}</text>
+          </view>
+          <view 
+            class="action-icon delete-icon"
+            catchtap="confirmDelete"
+            data-code="{{item.code}}"
+          >
+            <text>×</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 净值信息 -->
+      <view class="fund-values">
+        <view class="value-item">
+          <text class="value-label">单位净值</text>
+          <text class="value-number">{{item.dwjz || '--'}}</text>
+          <text class="value-date">{{item.jzrq || '--'}}</text>
+        </view>
+        <view class="value-divider"></view>
+        <view class="value-item">
+          <text class="value-label">估算净值</text>
+          <text class="value-number {{item.gszzl > 0 ? 'rise' : item.gszzl < 0 ? 'fall' : ''}}">
+            {{item.gsz || '--'}}
+          </text>
+          <text class="value-change {{item.gszzl > 0 ? 'rise' : item.gszzl < 0 ? 'fall' : ''}}">
+            {{item.gszzl > 0 ? '+' : ''}}{{item.gszzl}}%
+          </text>
+        </view>
+      </view>
+
+      <!-- 更新时间 -->
+      <view class="fund-footer">
+        <text class="update-time">{{item.gztime || '暂无数据'}}</text>
+      </view>
+
+      <!-- 分时图 -->
+      <view wx:if="{{settings.showIntraday && valuationSeries[item.code] && valuationSeries[item.code].length >= 2}}" class="intraday-section">
+        <intraday-chart 
+          series="{{valuationSeries[item.code]}}" 
+          referenceNav="{{item.dwjz}}"
+          canvasId="{{item.code}}"
+        ></intraday-chart>
+      </view>
+
+      <!-- 持仓信息（可展开） -->
+      <view wx:if="{{item.showHoldings && item.holdings && item.holdings.length > 0}}" class="holdings-section">
+        <view class="holdings-title">
+          <text>前十大持仓</text>
+        </view>
+        <view class="holdings-list">
+          <view wx:for="{{item.holdings}}" wx:key="code" wx:for-item="stock" class="holding-item">
+            <view class="holding-info">
+              <text class="holding-name">{{stock.name}}</text>
+              <text class="holding-code">{{stock.code}}</text>
+            </view>
+            <view class="holding-data">
+              <text class="holding-weight">{{stock.weight}}</text>
+              <text class="holding-change {{stock.change > 0 ? 'rise' : stock.change < 0 ? 'fall' : ''}}">
+                {{stock.change > 0 ? '+' : ''}}{{stock.change || '--'}}%
+              </text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 展开/收起按钮 -->
+      <view 
+        wx:if="{{item.holdings && item.holdings.length > 0}}"
+        class="expand-btn"
+        catchtap="toggleHoldings"
+        data-code="{{item.code}}"
+      >
+        <text>{{item.showHoldings ? '收起' : '展开'}}持仓</text>
+        <text class="arrow {{item.showHoldings ? 'up' : 'down'}}">›</text>
+      </view>
+    </view>
+
+    <view class="list-footer">
+      <text class="footer-text">- 已显示全部 -</text>
+    </view>
+  </scroll-view>
+</view>
+
+<!-- 设置弹窗 -->
+<view wx:if="{{showSettings}}" class="modal-overlay" bindtap="hideSettingsModal">
+  <view class="glass modal-content settings-modal" catchtap="preventClose">
+    <view class="modal-header">
+      <text class="modal-title">设置</text>
+      <view class="close-btn" bindtap="hideSettingsModal">
+        <text>×</text>
+      </view>
+    </view>
+    
+    <view class="setting-item">
+      <text class="setting-label">自动刷新</text>
+      <switch checked="{{settings.autoRefresh}}" bindchange="toggleAutoRefresh" />
+    </view>
+    
+    <view class="setting-item">
+      <text class="setting-label">刷新间隔</text>
+      <picker 
+        mode="selector" 
+        range="{{refreshIntervals}}" 
+        range-key="label"
+        value="{{refreshIntervalIndex}}"
+        bindchange="changeRefreshInterval"
+      >
+        <text class="setting-value">{{refreshIntervals[refreshIntervalIndex].label}}</text>
+      </picker>
+    </view>
+
+    <view class="setting-item">
+      <text class="setting-label">默认展开持仓</text>
+      <switch checked="{{settings.showHoldings}}" bindchange="toggleShowHoldings" />
+    </view>
+
+    <view class="setting-item">
+      <text class="setting-label">显示分时图</text>
+      <switch checked="{{settings.showIntraday}}" bindchange="toggleShowIntraday" />
+    </view>
+  </view>
+</view>

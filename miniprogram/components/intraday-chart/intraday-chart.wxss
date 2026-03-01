@@ -1,0 +1,64 @@
+/* components/intraday-chart/intraday-chart.wxss */
+.intraday-chart-container {
+  width: 100%;
+  padding: 20rpx 0;
+  position: relative;
+  background: #FFFFFF;
+  border-radius: 12rpx;
+}
+
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16rpx;
+  padding: 0 20rpx;
+}
+
+.chart-title {
+  font-size: 24rpx;
+  color: #666666;
+  font-weight: 500;
+}
+
+.chart-update {
+  font-size: 20rpx;
+  color: #999999;
+}
+
+.intraday-canvas {
+  display: block;
+  width: 100%;
+}
+
+.chart-tooltip {
+  position: absolute;
+  background: rgba(0, 0, 0, 0.8);
+  border-radius: 8rpx;
+  padding: 12rpx 16rpx;
+  pointer-events: none;
+  z-index: 100;
+  transform: translate(-50%, -120%);
+  white-space: nowrap;
+}
+
+.tooltip-time {
+  font-size: 22rpx;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 4rpx;
+}
+
+.tooltip-value {
+  font-size: 28rpx;
+  font-weight: 500;
+}
+
+.chart-empty {
+  padding: 80rpx 0;
+  text-align: center;
+}
+
+.empty-text {
+  font-size: 24rpx;
+  color: #CCCCCC;
+}

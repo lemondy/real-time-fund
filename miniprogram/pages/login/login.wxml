@@ -1,0 +1,53 @@
+<!-- pages/login/login.wxml -->
+<view class="login-container">
+  <view class="glass login-box">
+    <view class="logo-section">
+      <image class="logo" src="/images/logo.png" mode="aspectFit"></image>
+      <text class="app-name">基估宝</text>
+      <text class="app-desc">实时基金估值追踪</text>
+    </view>
+
+    <view class="login-content">
+      <view wx:if="{{!hasUserInfo}}" class="login-tips">
+        <text class="tips-text">使用微信登录后可享受</text>
+        <view class="tips-list">
+          <view class="tip-item">
+            <text class="tip-icon">✓</text>
+            <text>数据云端同步</text>
+          </view>
+          <view class="tip-item">
+            <text class="tip-icon">✓</text>
+            <text>多设备访问</text>
+          </view>
+          <view class="tip-item">
+            <text class="tip-icon">✓</text>
+            <text>个性化服务</text>
+          </view>
+        </view>
+      </view>
+
+      <button 
+        wx:if="{{!hasUserInfo}}" 
+        class="login-btn" 
+        bindtap="handleWxLogin"
+        loading="{{loading}}"
+      >
+        <text>微信登录</text>
+      </button>
+
+      <view wx:else class="user-info">
+        <image class="avatar" src="{{userInfo.avatarUrl}}" mode="aspectFill"></image>
+        <text class="nickname">{{userInfo.nickName}}</text>
+        <text class="status">已登录</text>
+        <button class="btn-back" bindtap="goBack">返回首页</button>
+      </view>
+    </view>
+
+    <view class="login-footer">
+      <text class="footer-text">登录即表示同意</text>
+      <text class="link">《用户协议》</text>
+      <text class="footer-text">和</text>
+      <text class="link">《隐私政策》</text>
+    </view>
+  </view>
+</view>

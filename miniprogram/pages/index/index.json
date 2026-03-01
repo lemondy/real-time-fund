@@ -1,0 +1,10 @@
+{
+  "navigationBarTitleText": "基估宝",
+  "navigationBarBackgroundColor": "#667eea",
+  "navigationBarTextStyle": "white",
+  "enablePullDownRefresh": true,
+  "backgroundTextStyle": "dark",
+  "usingComponents": {
+    "intraday-chart": "/components/intraday-chart/intraday-chart"
+  }
+}
