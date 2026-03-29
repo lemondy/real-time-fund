@@ -2,8 +2,7 @@
 .index-container {
   min-height: 100vh;
   padding: 20rpx;
-  /* 专业金融蓝渐变背景 */
-  background: linear-gradient(180deg, #0052D9 0%, #1677FF 50%, #4096FF 100%);
+  background: linear-gradient(180deg, #0A0A0A 0%, #141210 50%, #1A1510 100%);
 }
 
 /* 搜索区域 */
@@ -21,28 +20,60 @@
 .search-input {
   flex: 1;
   height: 72rpx;
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1rpx solid rgba(212, 168, 75, 0.2);
   border-radius: 36rpx;
   padding: 0 30rpx;
   font-size: 28rpx;
+  color: #FFFFFF;
 }
 
 .search-btn {
   width: 72rpx;
   height: 72rpx;
-  background: linear-gradient(135deg, #1677FF 0%, #0052D9 100%);
+  background: linear-gradient(135deg, #D4A84B 0%, #B08930 100%);
   border-radius: 36rpx;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 32rpx;
-  box-shadow: 0 4rpx 12rpx rgba(22, 119, 255, 0.4);
+  box-shadow: 0 4rpx 12rpx rgba(212, 168, 75, 0.35);
+}
+
+/* 图标 - 金黑主题 SVG，替代 emoji 提升沉浸感 */
+.icon-search {
+  width: 36rpx;
+  height: 36rpx;
+  background: no-repeat center/contain;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230A0A0A' stroke-width='2.2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='M21 21l-4.35-4.35'/%3E%3C/svg%3E");
+}
+
+.icon-refresh {
+  width: 36rpx;
+  height: 36rpx;
+  background: no-repeat center/contain;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23D4A84B' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M21 12a9 9 0 1 1-9-9'/%3E%3Cpath d='M21 3v6h-6'/%3E%3C/svg%3E");
+}
+
+.icon-settings {
+  width: 36rpx;
+  height: 36rpx;
+  background: no-repeat center/contain;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23D4A84B' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='12' cy='12' r='3'/%3E%3Cpath d='M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41'/%3E%3C/svg%3E");
+}
+
+.icon-close {
+  width: 32rpx;
+  height: 32rpx;
+  background: no-repeat center/contain;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' opacity='0.85'%3E%3Cpath d='M18 6L6 18M6 6l12 12'/%3E%3C/svg%3E");
 }
 
 .search-results {
   margin-top: 20rpx;
   max-height: 500rpx;
-  background: rgba(255, 255, 255, 0.95);
+  background: #1C1A17;
+  border: 1rpx solid rgba(212, 168, 75, 0.12);
   border-radius: 16rpx;
 }
 
@@ -55,7 +86,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 24rpx 30rpx;
-  border-bottom: 1rpx solid #f0f0f0;
+  border-bottom: 1rpx solid rgba(212, 168, 75, 0.08);
 }
 
 .result-item:last-child {
@@ -69,19 +100,19 @@
 
 .result-code {
   font-size: 24rpx;
-  color: #999;
+  color: rgba(255, 255, 255, 0.5);
   margin-bottom: 8rpx;
 }
 
 .result-name {
   font-size: 28rpx;
-  color: #333;
+  color: #FFFFFF;
   font-weight: 500;
 }
 
 .add-icon {
   font-size: 48rpx;
-  color: #1677FF;
+  color: #D4A84B;
   font-weight: 300;
 }
 
@@ -99,14 +130,14 @@
   align-items: center;
   justify-content: center;
   font-size: 28rpx;
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(255, 255, 255, 0.5);
   border-radius: 12rpx;
   transition: all 0.3s;
 }
 
 .tab-item.active {
-  background: rgba(255, 255, 255, 0.2);
-  color: #fff;
+  background: rgba(212, 168, 75, 0.15);
+  color: #D4A84B;
   font-weight: 500;
 }
 
@@ -129,11 +160,12 @@
   align-items: center;
   gap: 12rpx;
   padding: 16rpx 32rpx;
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(212, 168, 75, 0.1);
+  border: 1rpx solid rgba(212, 168, 75, 0.15);
   backdrop-filter: blur(10px);
   border-radius: 50rpx;
   font-size: 28rpx;
-  color: #fff;
+  color: #D4A84B;
 }
 
 .rotating {
@@ -163,29 +195,32 @@
 }
 
 .empty-icon {
-  font-size: 120rpx;
+  width: 160rpx;
+  height: 120rpx;
   margin-bottom: 30rpx;
+  background: no-repeat center/contain;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 48' fill='none' stroke='%23D4A84B' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round' opacity='0.9'%3E%3Cpath d='M8 40h48'/%3E%3Cline x1='14' y1='24' x2='14' y2='40'/%3E%3Cline x1='26' y1='30' x2='26' y2='40'/%3E%3Cline x1='38' y1='16' x2='38' y2='40'/%3E%3Cline x1='50' y1='28' x2='50' y2='40'/%3E%3C/svg%3E");
 }
 
 .empty-text {
   font-size: 32rpx;
-  color: rgba(255, 255, 255, 0.9);
+  color: rgba(255, 255, 255, 0.8);
   margin-bottom: 16rpx;
 }
 
 .empty-hint {
   font-size: 26rpx;
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(255, 255, 255, 0.4);
 }
 
-/* 基金卡片 - 纯白卡片设计 */
+/* 基金卡片 - 深色金融卡片 */
 .fund-card {
   margin-bottom: 20rpx;
   padding: 30rpx;
-  background: #FFFFFF;
+  background: #1C1A17;
   border-radius: 16rpx;
-  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.08);
-  border: 1rpx solid #F0F0F0;
+  box-shadow: 0 2rpx 16rpx rgba(0, 0, 0, 0.4);
+  border: 1rpx solid rgba(212, 168, 75, 0.1);
 }
 
 .fund-header {
@@ -204,13 +239,13 @@
 .fund-name {
   font-size: 32rpx;
   font-weight: 500;
-  color: #1A1A1A;
+  color: #FFFFFF;
   margin-bottom: 8rpx;
 }
 
 .fund-code {
   font-size: 24rpx;
-  color: #999999;
+  color: rgba(255, 255, 255, 0.45);
   font-family: 'Roboto', 'Helvetica Neue', sans-serif;
 }
 
@@ -226,19 +261,19 @@
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  background: #F5F5F5;
+  background: rgba(212, 168, 75, 0.1);
   font-size: 32rpx;
-  color: #666666;
+  color: rgba(255, 255, 255, 0.6);
 }
 
 .favorite-icon.active {
-  background: #FFF3E0;
-  color: #FFA726;
+  background: rgba(212, 168, 75, 0.2);
+  color: #D4A84B;
 }
 
 .delete-icon {
-  background: #FFEBEE;
-  color: #D32F2F;
+  background: rgba(211, 47, 47, 0.15);
+  color: #EF5350;
   font-size: 40rpx;
 }
 
@@ -246,9 +281,9 @@
 .fund-values {
   display: flex;
   padding: 24rpx 0;
-  border-top: 1rpx solid #E0E0E0;
-  border-bottom: 1rpx solid #E0E0E0;
-  background: #FAFAFA;
+  border-top: 1rpx solid rgba(212, 168, 75, 0.1);
+  border-bottom: 1rpx solid rgba(212, 168, 75, 0.1);
+  background: rgba(0, 0, 0, 0.2);
   margin: 0 -30rpx;
   padding: 24rpx 30rpx;
 }
@@ -262,16 +297,15 @@
 
 .value-label {
   font-size: 24rpx;
-  color: #999999;
+  color: rgba(255, 255, 255, 0.45);
   margin-bottom: 12rpx;
 }
 
 .value-number {
   font-size: 36rpx;
   font-weight: bold;
-  color: #1A1A1A;
+  color: #FFFFFF;
   margin-bottom: 8rpx;
-  /* 使用金融专用等宽字体 */
   font-family: 'DIN Alternate', 'Roboto', 'Helvetica Neue', sans-serif;
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.5rpx;
@@ -279,11 +313,23 @@
 
 .value-date {
   font-size: 22rpx;
-  color: #CCCCCC;
+  color: rgba(255, 255, 255, 0.3);
 }
 
-.value-change {
-  font-size: 28rpx;
+.estimate-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 4rpx;
+  margin-bottom: 8rpx;
+}
+
+.estimate-row .value-number {
+  margin-bottom: 0;
+}
+
+.value-change-inline {
+  font-size: 24rpx;
   font-weight: 500;
   font-family: 'DIN Alternate', 'Roboto', 'Helvetica Neue', sans-serif;
   font-variant-numeric: tabular-nums;
@@ -292,89 +338,123 @@
 .value-divider {
   width: 2rpx;
   height: 100rpx;
-  background: #E0E0E0;
-}
-
-.fund-footer {
-  margin-top: 20rpx;
-  text-align: center;
-}
-
-.update-time {
-  font-size: 22rpx;
-  color: #CCCCCC;
+  background: rgba(212, 168, 75, 0.12);
 }
 
 /* 分时图区域 */
 .intraday-section {
   margin-top: 24rpx;
   padding-top: 24rpx;
-  border-top: 1rpx solid #E0E0E0;
-  background: #FFFFFF;
+  border-top: 1rpx solid rgba(212, 168, 75, 0.1);
+  background: #1C1A17;
 }
 
 /* 持仓信息 */
 .holdings-section {
   margin-top: 24rpx;
   padding-top: 24rpx;
-  border-top: 1rpx solid #E0E0E0;
+  border-top: 1rpx solid rgba(212, 168, 75, 0.1);
+}
+
+.holdings-header {
+  margin-bottom: 16rpx;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 12rpx;
 }
 
 .holdings-title {
+  font-size: 28rpx;
+  color: #D4A84B;
+  font-weight: 600;
+}
+
+.holdings-total {
   font-size: 26rpx;
-  color: #666666;
-  margin-bottom: 16rpx;
+  color: rgba(255, 255, 255, 0.9);
   font-weight: 500;
 }
 
-.holdings-list {
+.holdings-hint {
+  font-size: 22rpx;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.holdings-table {
   display: flex;
   flex-direction: column;
-  gap: 12rpx;
+  gap: 0;
+}
+
+.holdings-thead {
+  display: flex;
+  align-items: center;
+  padding: 12rpx 0;
+  border-bottom: 1rpx solid rgba(212, 168, 75, 0.12);
+  font-size: 22rpx;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.col-name {
+  flex: 5;
+  min-width: 0;
+}
+
+.col-change {
+  flex: 3;
+  text-align: center;
+}
+
+.col-weight {
+  flex: 3;
+  text-align: right;
 }
 
 .holding-item {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 12rpx 0;
+  padding: 16rpx 0;
+  border-bottom: 1rpx solid rgba(212, 168, 75, 0.06);
+}
+
+.holding-item:last-child {
+  border-bottom: none;
 }
 
 .holding-info {
-  flex: 1;
+  flex: 5;
+  min-width: 0;
   display: flex;
   flex-direction: column;
 }
 
 .holding-name {
   font-size: 26rpx;
-  color: #1A1A1A;
+  color: #FFFFFF;
   margin-bottom: 4rpx;
 }
 
 .holding-code {
   font-size: 22rpx;
-  color: #999999;
+  color: rgba(255, 255, 255, 0.4);
   font-family: 'Roboto', sans-serif;
 }
 
-.holding-data {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-}
-
-.holding-weight {
+.holding-change {
+  flex: 3;
+  text-align: center;
   font-size: 24rpx;
-  color: #666666;
-  margin-bottom: 4rpx;
+  font-weight: 500;
   font-family: 'DIN Alternate', 'Roboto', sans-serif;
   font-variant-numeric: tabular-nums;
 }
 
-.holding-change {
+.holding-weight {
+  flex: 3;
+  text-align: right;
   font-size: 24rpx;
-  font-weight: 500;
+  color: rgba(255, 255, 255, 0.85);
   font-family: 'DIN Alternate', 'Roboto', sans-serif;
   font-variant-numeric: tabular-nums;
 }
@@ -387,8 +467,8 @@
   justify-content: center;
   gap: 8rpx;
   font-size: 26rpx;
-  color: #666666;
-  border-top: 1rpx solid #E0E0E0;
+  color: #D4A84B;
+  border-top: 1rpx solid rgba(212, 168, 75, 0.1);
 }
 
 .arrow {
@@ -413,7 +493,7 @@
 
 .footer-text {
   font-size: 24rpx;
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.3);
 }
 
 /* 弹窗 */
@@ -423,7 +503,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.7);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -446,7 +526,7 @@
 .modal-title {
   font-size: 36rpx;
   font-weight: bold;
-  color: #fff;
+  color: #D4A84B;
 }
 
 .close-btn {
@@ -456,7 +536,7 @@
   align-items: center;
   justify-content: center;
   font-size: 48rpx;
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(255, 255, 255, 0.5);
 }
 
 .setting-item {
@@ -464,7 +544,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 24rpx 0;
-  border-bottom: 1rpx solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1rpx solid rgba(212, 168, 75, 0.08);
 }
 
 .setting-item:last-child {
@@ -473,10 +553,10 @@
 
 .setting-label {
   font-size: 28rpx;
-  color: rgba(255, 255, 255, 0.9);
+  color: rgba(255, 255, 255, 0.85);
 }
 
 .setting-value {
   font-size: 28rpx;
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(255, 255, 255, 0.55);
 }

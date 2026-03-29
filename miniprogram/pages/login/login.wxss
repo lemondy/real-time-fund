@@ -5,8 +5,7 @@
   align-items: center;
   justify-content: center;
   padding: 40rpx;
-  /* 专业金融蓝渐变背景 */
-  background: linear-gradient(180deg, #0052D9 0%, #1677FF 50%, #4096FF 100%);
+  background: linear-gradient(180deg, #0A0A0A 0%, #141210 50%, #1A1510 100%);
 }
 
 .login-box {
@@ -29,19 +28,19 @@
   height: 160rpx;
   border-radius: 32rpx;
   margin-bottom: 24rpx;
-  background: #fff;
+  background: linear-gradient(135deg, #D4A84B 0%, #B08930 100%);
 }
 
 .app-name {
   font-size: 48rpx;
   font-weight: bold;
-  color: #fff;
+  color: #D4A84B;
   margin-bottom: 12rpx;
 }
 
 .app-desc {
   font-size: 28rpx;
-  color: rgba(255, 255, 255, 0.8);
+  color: rgba(255, 255, 255, 0.6);
 }
 
 .login-content {
@@ -59,7 +58,7 @@
 .tips-text {
   display: block;
   font-size: 28rpx;
-  color: rgba(255, 255, 255, 0.9);
+  color: rgba(255, 255, 255, 0.8);
   text-align: center;
   margin-bottom: 30rpx;
 }
@@ -74,35 +73,35 @@
   display: flex;
   align-items: center;
   font-size: 26rpx;
-  color: rgba(255, 255, 255, 0.8);
+  color: rgba(255, 255, 255, 0.65);
 }
 
 .tip-icon {
   width: 40rpx;
   height: 40rpx;
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(212, 168, 75, 0.15);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   margin-right: 16rpx;
   font-size: 24rpx;
-  color: #fff;
+  color: #D4A84B;
 }
 
 .login-btn {
   width: 100%;
   height: 96rpx;
-  background: linear-gradient(135deg, #1677FF 0%, #0052D9 100%);
-  color: #fff;
+  background: linear-gradient(135deg, #D4A84B 0%, #B08930 100%);
+  color: #0A0A0A;
   border: none;
   border-radius: 48rpx;
   font-size: 32rpx;
-  font-weight: 500;
+  font-weight: 600;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 8rpx 24rpx rgba(22, 119, 255, 0.4);
+  box-shadow: 0 8rpx 24rpx rgba(212, 168, 75, 0.35);
 }
 
 .login-btn::after {
@@ -121,28 +120,28 @@
   height: 120rpx;
   border-radius: 60rpx;
   margin-bottom: 20rpx;
-  border: 4rpx solid rgba(255, 255, 255, 0.8);
+  border: 4rpx solid rgba(212, 168, 75, 0.5);
 }
 
 .nickname {
   font-size: 32rpx;
-  color: #fff;
+  color: #FFFFFF;
   font-weight: 500;
   margin-bottom: 12rpx;
 }
 
 .status {
   font-size: 26rpx;
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(255, 255, 255, 0.5);
   margin-bottom: 40rpx;
 }
 
 .btn-back {
   width: 100%;
   height: 88rpx;
-  background: rgba(255, 255, 255, 0.9);
-  color: #1677FF;
-  border: none;
+  background: rgba(212, 168, 75, 0.12);
+  color: #D4A84B;
+  border: 2rpx solid rgba(212, 168, 75, 0.3);
   border-radius: 44rpx;
   font-size: 30rpx;
   font-weight: 500;
@@ -156,10 +155,10 @@
   margin-top: 60rpx;
   text-align: center;
   font-size: 24rpx;
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(255, 255, 255, 0.35);
 }
 
 .link {
-  color: #fff;
+  color: #D4A84B;
   text-decoration: underline;
 }

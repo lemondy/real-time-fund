@@ -5,13 +5,13 @@
     <view class="search-box">
       <input 
         class="search-input" 
-        placeholder="输入基金代码或名称搜索" 
+        placeholder="输入小鸡编号或名称搜索" 
         value="{{searchKeyword}}"
         bindinput="onSearchInput"
         bindconfirm="handleSearch"
       />
       <view class="search-btn" bindtap="handleSearch">
-        <text class="search-icon">🔍</text>
+        <view class="icon-search"></view>
       </view>
     </view>
 
@@ -49,7 +49,7 @@
       bindtap="switchTab"
       data-tab="1"
     >
-      <text>自选({{favoriteCount}})</text>
+      <text>收藏({{favoriteCount}})</text>
     </view>
   </view>
 
@@ -57,19 +57,19 @@
   <view class="action-bar">
     <view class="action-left">
       <view class="refresh-btn" bindtap="handleRefresh">
-        <text class="{{refreshing ? 'rotating' : ''}}">🔄</text>
+        <view class="icon-refresh {{refreshing ? 'rotating' : ''}}"></view>
         <text class="btn-text">刷新</text>
       </view>
     </view>
     <view class="action-right">
       <view class="settings-btn" bindtap="showSettingsModal">
-        <text>⚙️</text>
+        <view class="icon-settings"></view>
         <text class="btn-text">设置</text>
       </view>
     </view>
   </view>
 
-  <!-- 基金列表 -->
+  <!-- 小鸡列表 -->
   <scroll-view 
     scroll-y 
     class="fund-list"
@@ -78,9 +78,9 @@
     bindrefresherrefresh="handleRefresh"
   >
     <view wx:if="{{displayFunds.length === 0}}" class="empty-state">
-      <text class="empty-icon">📊</text>
-      <text class="empty-text">{{currentTab === 0 ? '还没有添加基金' : '还没有自选基金'}}</text>
-      <text class="empty-hint">在上方搜索栏添加基金</text>
+      <view class="empty-icon"></view>
+      <text class="empty-text">{{currentTab === 0 ? '还没有添加小鸡' : '还没有收藏小鸡'}}</text>
+      <text class="empty-hint">在上方搜索栏添加小鸡</text>
     </view>
 
     <view 
@@ -90,7 +90,7 @@
       bindtap="showFundDetail"
       data-fund="{{item}}"
     >
-      <!-- 基金头部 -->
+      <!-- 小鸡头部 -->
       <view class="fund-header">
         <view class="fund-info">
           <text class="fund-name">{{item.name}}</text>
@@ -114,28 +114,22 @@
         </view>
       </view>
 
-      <!-- 净值信息 -->
+      <!-- 体重信息 -->
       <view class="fund-values">
         <view class="value-item">
-          <text class="value-label">单位净值</text>
+          <text class="value-label">体重</text>
           <text class="value-number">{{item.dwjz || '--'}}</text>
           <text class="value-date">{{item.jzrq || '--'}}</text>
         </view>
         <view class="value-divider"></view>
         <view class="value-item">
-          <text class="value-label">估算净值</text>
-          <text class="value-number {{item.gszzl > 0 ? 'rise' : item.gszzl < 0 ? 'fall' : ''}}">
-            {{item.gsz || '--'}}
-          </text>
-          <text class="value-change {{item.gszzl > 0 ? 'rise' : item.gszzl < 0 ? 'fall' : ''}}">
-            {{item.gszzl > 0 ? '+' : ''}}{{item.gszzl}}%
-          </text>
+          <text class="value-label">{{item.displayLabel || '预估体重'}}</text>
+          <view class="estimate-row">
+            <text class="value-number {{item.displayGszzl > 0 ? 'rise' : item.displayGszzl < 0 ? 'fall' : ''}}">{{item.displayGsz || '--'}}</text>
+            <text class="value-change-inline {{item.displayGszzl > 0 ? 'rise' : item.displayGszzl < 0 ? 'fall' : ''}}">({{item.displayGszzl > 0 ? '+' : ''}}{{item.displayGszzl}}%)</text>
+          </view>
+          <text class="value-date">{{item.displayTime || '--'}}</text>
         </view>
-      </view>
-
-      <!-- 更新时间 -->
-      <view class="fund-footer">
-        <text class="update-time">{{item.gztime || '暂无数据'}}</text>
       </view>
 
       <!-- 分时图 -->
@@ -147,23 +141,28 @@
         ></intraday-chart>
       </view>
 
-      <!-- 持仓信息（可展开） -->
+      <!-- 口粮信息（可展开） -->
       <view wx:if="{{item.showHoldings && item.holdings && item.holdings.length > 0}}" class="holdings-section">
-        <view class="holdings-title">
-          <text>前十大持仓</text>
+        <view class="holdings-header">
+          <text class="holdings-title">前十大口粮</text>
+          <text wx:if="{{item.holdingsTotalPercent}}" class="holdings-total">占比{{item.holdingsTotalPercent}}</text>
+          <text wx:if="{{item.holdingsConcentrationHint}}" class="holdings-hint">{{item.holdingsConcentrationHint}}</text>
         </view>
-        <view class="holdings-list">
+        <view class="holdings-table">
+          <view class="holdings-thead">
+            <text class="col-name">股票简称</text>
+            <text class="col-change">增减幅</text>
+            <text class="col-weight">口粮占比</text>
+          </view>
           <view wx:for="{{item.holdings}}" wx:key="code" wx:for-item="stock" class="holding-item">
             <view class="holding-info">
               <text class="holding-name">{{stock.name}}</text>
               <text class="holding-code">{{stock.code}}</text>
             </view>
-            <view class="holding-data">
-              <text class="holding-weight">{{stock.weight}}</text>
-              <text class="holding-change {{stock.change > 0 ? 'rise' : stock.change < 0 ? 'fall' : ''}}">
-                {{stock.change > 0 ? '+' : ''}}{{stock.change || '--'}}%
-              </text>
-            </view>
+            <text class="holding-change {{stock.change > 0 ? 'rise' : stock.change < 0 ? 'fall' : ''}}">
+              {{stock.change != null ? (stock.change > 0 ? '+' : '') + stock.change + '%' : '--'}}
+            </text>
+            <text class="holding-weight">{{stock.weight || '--'}}</text>
           </view>
         </view>
       </view>
@@ -175,7 +174,7 @@
         catchtap="toggleHoldings"
         data-code="{{item.code}}"
       >
-        <text>{{item.showHoldings ? '收起' : '展开'}}持仓</text>
+        <text>{{item.showHoldings ? '收起' : '展开'}}口粮</text>
         <text class="arrow {{item.showHoldings ? 'up' : 'down'}}">›</text>
       </view>
     </view>
@@ -192,7 +191,7 @@
     <view class="modal-header">
       <text class="modal-title">设置</text>
       <view class="close-btn" bindtap="hideSettingsModal">
-        <text>×</text>
+        <view class="icon-close"></view>
       </view>
     </view>
     
@@ -215,7 +214,7 @@
     </view>
 
     <view class="setting-item">
-      <text class="setting-label">默认展开持仓</text>
+      <text class="setting-label">默认展开口粮</text>
       <switch checked="{{settings.showHoldings}}" bindchange="toggleShowHoldings" />
     </view>
 

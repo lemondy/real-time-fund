@@ -40,7 +40,7 @@ export const addFund = (fund) => {
     const exists = funds.some(f => f.code === fund.code);
     if (exists) {
       wx.showToast({
-        title: '基金已存在',
+        title: '小鸡已存在',
         icon: 'none'
       });
       return false;

@@ -144,5 +144,19 @@ Page({
     wx.switchTab({
       url: '/pages/index/index'
     });
+  },
+  handleOpenPrivacy() {
+    wx.openPrivacyContract({
+      success: () => {
+        console.log('隐私协议打开成功');
+      },
+      fail: (err) => {
+        console.error('隐私协议打开失败', err);
+        wx.showToast({
+          title: '无法打开协议',
+          icon: 'none'
+        });
+      }
+    });
   }
 });

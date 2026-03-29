@@ -20,7 +20,7 @@ export const fetchFundData = (code) => {
           const data = JSON.parse(jsonStr);
           
           if (!data || !data.fundcode) {
-            reject(new Error('基金数据格式错误'));
+            reject(new Error('数据格式错误'));
             return;
           }
 
@@ -57,7 +57,7 @@ export const fetchFundHoldings = (code) => {
   return new Promise((resolve) => {
     // 使用天天基金的持仓API（返回JSON格式，避免GBK编码问题）
     wx.request({
-      url: `http://fund.eastmoney.com/f10/FundArchivesDatas.aspx?type=jjcc&code=${code}&topline=10&year=&month=&rt=${Math.random()}`,
+      url: `https://fund.eastmoney.com/f10/FundArchivesDatas.aspx?type=jjcc&code=${code}&topline=10&year=&month=&rt=${Math.random()}`,
       method: 'GET',
       header: {
         'content-type': 'application/json'
@@ -255,21 +255,89 @@ export const fetchStockQuotes = (holdings) => {
 };
 
 /**
- * 获取完整的基金数据（包括估值和持仓）
- * @param {string} code - 基金代码
- * @returns {Promise<Object>} 完整的基金数据
+ * 收盘后获取当日实际净值（fundgz 接口不更新 dwjz，需要用历史净值接口补充）
+ */
+export const fetchLatestNav = (code) => {
+  return new Promise((resolve) => {
+    wx.request({
+      url: `http://fund.eastmoney.com/f10/F10DataApi.aspx?type=lsjz&code=${code}&page=1&per=1&rt=${Math.random()}`,
+      method: 'GET',
+      dataType: 'text',
+      responseType: 'text',
+      success: (res) => {
+        try {
+          const data = typeof res.data === 'string' ? res.data : '';
+          const contentMatch = data.match(/content:"([\s\S]*?)"/);
+          if (!contentMatch) { resolve(null); return; }
+
+          const html = contentMatch[1].replace(/\\"/g, '"').replace(/\\\\/g, '\\');
+          const trMatches = html.match(/<tr[\s\S]*?<\/tr>/gi) || [];
+
+          for (let i = 0; i < trMatches.length; i++) {
+            const tdMatches = trMatches[i].match(/<td[\s\S]*?>([\s\S]*?)<\/td>/gi);
+            if (!tdMatches || tdMatches.length < 3) continue;
+            const cells = tdMatches.map(td =>
+              td.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, '').trim()
+            );
+            if (cells[0].includes('日期') || !/^\d{4}-\d{2}-\d{2}$/.test(cells[0])) continue;
+            const rawChange = (cells[3] || '').replace(/[%％]/g, '').trim();
+            resolve({
+              jzrq: cells[0],
+              dwjz: cells[1],
+              jzzzl: rawChange !== '' ? parseFloat(rawChange) : null
+            });
+            return;
+          }
+          resolve(null);
+        } catch (e) {
+          console.error('获取实际净值失败:', e);
+          resolve(null);
+        }
+      },
+      fail: () => resolve(null)
+    });
+  });
+};
+
+/**
+ * 获取完整数据（包括估值和持仓），收盘后自动补充当日实际净值
  */
 export const fetchFullFundData = async (code) => {
   try {
-    // 获取基金估值数据
     const fundData = await fetchFundData(code);
-    
-    // 获取持仓数据
+
+    const now = new Date();
+    const afterClose = now.getHours() > 15 || (now.getHours() === 15 && now.getMinutes() >= 30);
+    const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+
+    // 15:30 后尝试获取当日实际净值，存到独立字段，不覆盖原始 dwjz/jzrq
+    fundData.actualNav = null;
+    fundData.actualNavDate = null;
+    fundData.actualNavChange = null;
+
+    if (afterClose) {
+      const latest = await fetchLatestNav(code);
+      if (latest && latest.jzrq === today) {
+        fundData.actualNav = latest.dwjz;
+        fundData.actualNavDate = latest.jzrq;
+
+        // 优先用接口返回的涨跌幅
+        if (latest.jzzzl != null && !isNaN(latest.jzzzl)) {
+          fundData.actualNavChange = latest.jzzzl;
+        } else {
+          // 兜底：用前一日体重自行计算
+          const prev = parseFloat(fundData.dwjz);
+          const curr = parseFloat(latest.dwjz);
+          if (prev > 0 && curr > 0) {
+            fundData.actualNavChange = parseFloat(((curr - prev) / prev * 100).toFixed(2));
+          }
+        }
+      }
+    }
+
     const holdings = await fetchFundHoldings(code);
-    
-    // 获取持仓股票行情
     const holdingsWithQuotes = await fetchStockQuotes(holdings);
-    
+
     return {
       ...fundData,
       holdings: holdingsWithQuotes
@@ -349,7 +417,7 @@ export const batchFetchFundData = async (codes) => {
       console.error(`获取基金${code}数据失败:`, error);
       results.push({
         code,
-        name: `基金${code}`,
+        name: `小鸡${code}`,
         error: true
       });
     }

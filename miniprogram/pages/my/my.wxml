@@ -27,17 +27,17 @@
   <view class="glass stats-section">
     <view class="stat-item">
       <text class="stat-value">{{fundCount}}</text>
-      <text class="stat-label">关注基金</text>
+      <text class="stat-label">关注小鸡</text>
     </view>
     <view class="divider"></view>
     <view class="stat-item">
       <text class="stat-value">{{favoriteCount}}</text>
-      <text class="stat-label">自选基金</text>
+      <text class="stat-label">收藏小鸡</text>
     </view>
     <view class="divider"></view>
     <view class="stat-item">
       <text class="stat-value">{{totalValue}}</text>
-      <text class="stat-label">总估值(元)</text>
+      <text class="stat-label">预估总重(元)</text>
     </view>
   </view>
 
@@ -45,7 +45,7 @@
   <view class="glass menu-section">
     <view class="menu-item" bindtap="handleSync">
       <view class="menu-left">
-        <text class="menu-icon">☁️</text>
+        <view class="menu-icon icon-sync"></view>
         <text class="menu-text">数据同步</text>
       </view>
       <text class="arrow">›</text>
@@ -54,7 +54,7 @@
     
     <view class="menu-item" bindtap="handleClearCache">
       <view class="menu-left">
-        <text class="menu-icon">🗑️</text>
+        <view class="menu-icon icon-trash"></view>
         <text class="menu-text">清除缓存</text>
       </view>
       <text class="arrow">›</text>
@@ -63,7 +63,7 @@
     
     <view class="menu-item" bindtap="handleAbout">
       <view class="menu-left">
-        <text class="menu-icon">ℹ️</text>
+        <view class="menu-icon icon-info"></view>
         <text class="menu-text">关于我们</text>
       </view>
       <text class="arrow">›</text>
@@ -77,6 +77,6 @@
 
   <!-- 版本信息 -->
   <view class="version-info">
-    <text class="version-text">基民眼 v{{version}}</text>
+    <text class="version-text">咕咕看板 v{{version}}</text>
   </view>
 </view>

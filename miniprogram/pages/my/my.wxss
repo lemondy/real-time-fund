@@ -2,8 +2,7 @@
 .my-container {
   min-height: 100vh;
   padding: 20rpx;
-  /* 专业金融蓝渐变背景 */
-  background: linear-gradient(180deg, #0052D9 0%, #1677FF 50%, #4096FF 100%);
+  background: linear-gradient(180deg, #0A0A0A 0%, #141210 50%, #1A1510 100%);
 }
 
 .user-section {
@@ -23,11 +22,11 @@
   top: 50%;
   transform: translateY(-50%);
   padding: 12rpx 24rpx;
-  background: rgba(255, 255, 255, 0.9);
-  color: #1677FF;
+  background: rgba(212, 168, 75, 0.12);
+  color: #D4A84B;
   font-size: 24rpx;
   border-radius: 20rpx;
-  border: none;
+  border: 1rpx solid rgba(212, 168, 75, 0.25);
 }
 
 .btn-update-info::after {
@@ -39,7 +38,7 @@
   height: 120rpx;
   border-radius: 60rpx;
   margin-right: 24rpx;
-  border: 4rpx solid rgba(255, 255, 255, 0.8);
+  border: 4rpx solid rgba(212, 168, 75, 0.5);
 }
 
 .avatar-default {
@@ -47,7 +46,7 @@
   height: 120rpx;
   border-radius: 60rpx;
   margin-right: 24rpx;
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(212, 168, 75, 0.15);
 }
 
 .user-detail {
@@ -59,13 +58,13 @@
 .nickname {
   font-size: 36rpx;
   font-weight: bold;
-  color: #fff;
+  color: #FFFFFF;
   margin-bottom: 8rpx;
 }
 
 .user-id {
   font-size: 24rpx;
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(255, 255, 255, 0.5);
 }
 
 .login-prompt {
@@ -82,18 +81,18 @@
 .login-title {
   font-size: 32rpx;
   font-weight: 500;
-  color: #fff;
+  color: #FFFFFF;
   margin-bottom: 8rpx;
 }
 
 .login-desc {
   font-size: 24rpx;
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(255, 255, 255, 0.5);
 }
 
 .arrow {
   font-size: 48rpx;
-  color: rgba(255, 255, 255, 0.6);
+  color: #D4A84B;
   font-weight: 300;
 }
 
@@ -113,19 +112,19 @@
 .stat-value {
   font-size: 48rpx;
   font-weight: bold;
-  color: #fff;
+  color: #D4A84B;
   margin-bottom: 8rpx;
 }
 
 .stat-label {
   font-size: 24rpx;
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(255, 255, 255, 0.55);
 }
 
 .divider {
   width: 2rpx;
   height: 80rpx;
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(212, 168, 75, 0.15);
 }
 
 .menu-section {
@@ -147,18 +146,33 @@
 }
 
 .menu-icon {
-  font-size: 40rpx;
+  width: 44rpx;
+  height: 44rpx;
   margin-right: 24rpx;
+  flex-shrink: 0;
+  background: no-repeat center/contain;
+}
+
+.icon-sync {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23D4A84B' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8'/%3E%3Cpath d='M3 3v5h5'/%3E%3Cpath d='M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16'/%3E%3Cpath d='M21 21v-5h-5'/%3E%3C/svg%3E");
+}
+
+.icon-trash {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23D4A84B' stroke-width='2' stroke-linecap='round'%3E%3Cpolyline points='3 6 5 6 21 6'/%3E%3Cpath d='M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2'/%3E%3Cline x1='10' y1='11' x2='10' y2='17'/%3E%3Cline x1='14' y1='11' x2='14' y2='17'/%3E%3C/svg%3E");
+}
+
+.icon-info {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23D4A84B' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cline x1='12' y1='16' x2='12' y2='12'/%3E%3Cline x1='12' y1='8' x2='12.01' y2='8'/%3E%3C/svg%3E");
 }
 
 .menu-text {
   font-size: 28rpx;
-  color: #fff;
+  color: #FFFFFF;
 }
 
 .menu-divider {
   height: 1rpx;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(212, 168, 75, 0.08);
   margin: 0 40rpx;
 }
 
@@ -170,9 +184,9 @@
 .logout-btn {
   width: 100%;
   height: 88rpx;
-  background: rgba(211, 47, 47, 0.15);
-  color: #fff;
-  border: 2rpx solid rgba(211, 47, 47, 0.3);
+  background: rgba(211, 47, 47, 0.12);
+  color: #EF5350;
+  border: 2rpx solid rgba(211, 47, 47, 0.25);
   border-radius: 16rpx;
   font-size: 28rpx;
   display: flex;
@@ -192,5 +206,5 @@
 
 .version-text {
   font-size: 24rpx;
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.25);
 }

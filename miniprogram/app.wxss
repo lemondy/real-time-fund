@@ -1,37 +1,36 @@
 /* app.wxss - 全局样式 */
 
-/* 金融配色系统 */
+/* 金融配色系统 - 金黑尊享版 */
 page {
   height: 100%;
-  /* 专业金融蓝背景 */
-  background: linear-gradient(180deg, #0052D9 0%, #1677FF 100%);
-  --finance-primary: #1677FF; /* 核心科技蓝 */
-  --finance-primary-dark: #0052D9; /* 深蓝 */
-  --finance-primary-light: #4096FF; /* 浅蓝 */
+  background: linear-gradient(180deg, #0A0A0A 0%, #1A1510 100%);
+  --finance-primary: #D4A84B;
+  --finance-primary-dark: #B08930;
+  --finance-primary-light: #E8C878;
   
   /* 涨跌配色 - 中国标准：红涨绿跌 */
-  --finance-rise: #D32F2F; /* 朱红 */
-  --finance-rise-light: #EF5350; /* 浅朱红 */
-  --finance-fall: #388E3C; /* 墨绿 */
-  --finance-fall-light: #66BB6A; /* 浅墨绿 */
+  --finance-rise: #D32F2F;
+  --finance-rise-light: #EF5350;
+  --finance-fall: #388E3C;
+  --finance-fall-light: #66BB6A;
   
   /* 预警色 */
-  --finance-warning: #FFA726; /* 琥珀色 */
-  --finance-warning-bg: #FFF3E0; /* 警告背景 */
+  --finance-warning: #FFA726;
+  --finance-warning-bg: rgba(255, 167, 38, 0.12);
   
   /* 背景与卡片 */
-  --finance-bg: #F5F5F5; /* 浅灰背景 */
-  --finance-card-bg: #FFFFFF; /* 卡片纯白 */
+  --finance-bg: #0A0A0A;
+  --finance-card-bg: #1C1A17;
   
   /* 文字颜色 */
-  --finance-text-primary: #1A1A1A; /* 主要文字 */
-  --finance-text-secondary: #666666; /* 次要文字 */
-  --finance-text-tertiary: #999999; /* 辅助文字 */
-  --finance-text-disabled: #CCCCCC; /* 禁用文字 */
+  --finance-text-primary: #FFFFFF;
+  --finance-text-secondary: rgba(255, 255, 255, 0.7);
+  --finance-text-tertiary: rgba(255, 255, 255, 0.5);
+  --finance-text-disabled: rgba(255, 255, 255, 0.3);
   
   /* 分割线 */
-  --finance-border: #E0E0E0;
-  --finance-border-light: #F0F0F0;
+  --finance-border: rgba(212, 168, 75, 0.15);
+  --finance-border-light: rgba(212, 168, 75, 0.08);
 }
 
 .container {
@@ -40,36 +39,36 @@ page {
   box-sizing: border-box;
 }
 
-/* 玻璃拟态效果 - 金融版 */
+/* 玻璃拟态效果 - 金黑版 */
 .glass {
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(212, 168, 75, 0.06);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(212, 168, 75, 0.12);
   border-radius: 16rpx;
-  box-shadow: 0 8rpx 32rpx 0 rgba(0, 82, 217, 0.15);
+  box-shadow: 0 8rpx 32rpx 0 rgba(0, 0, 0, 0.4);
 }
 
-/* 卡片样式 - 专业金融卡片 */
+/* 卡片样式 - 深色金融卡片 */
 .card {
   background: var(--finance-card-bg);
   border-radius: 16rpx;
   padding: 30rpx;
   margin-bottom: 20rpx;
-  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.08);
-  border: 1rpx solid var(--finance-border-light);
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.3);
+  border: 1rpx solid rgba(212, 168, 75, 0.1);
 }
 
-/* 按钮样式 - 金融蓝 */
+/* 按钮样式 - 金色渐变 */
 .btn {
-  background: linear-gradient(135deg, #1677FF 0%, #0052D9 100%);
-  color: #fff;
+  background: linear-gradient(135deg, #D4A84B 0%, #B08930 100%);
+  color: #0A0A0A;
   border: none;
   border-radius: 50rpx;
   padding: 20rpx 40rpx;
   font-size: 28rpx;
-  font-weight: 500;
-  box-shadow: 0 4rpx 12rpx rgba(22, 119, 255, 0.3);
+  font-weight: 600;
+  box-shadow: 0 4rpx 12rpx rgba(212, 168, 75, 0.3);
 }
 
 .btn-disabled {
@@ -79,12 +78,12 @@ page {
 
 /* 输入框样式 */
 .input {
-  background: #fff;
-  border: 2rpx solid var(--finance-border);
+  background: rgba(255, 255, 255, 0.06);
+  border: 2rpx solid rgba(212, 168, 75, 0.2);
   border-radius: 12rpx;
   padding: 20rpx;
   font-size: 28rpx;
-  color: var(--finance-text-primary);
+  color: #FFFFFF;
 }
 
 .input:focus {
@@ -227,5 +226,5 @@ page {
   color: var(--finance-warning);
   font-size: 22rpx;
   border-radius: 6rpx;
-  border: 1rpx solid var(--finance-warning);
+  border: 1rpx solid rgba(255, 167, 38, 0.3);
 }

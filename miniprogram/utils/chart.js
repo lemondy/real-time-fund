@@ -34,7 +34,7 @@ export function formatPercent(value, decimals = 2) {
 export function getChangeColor(value) {
   if (value > 0) return '#D32F2F'; // 朱红（涨）
   if (value < 0) return '#388E3C'; // 墨绿（跌）
-  return '#999999'; // 平灰
+  return '#D4A84B'; // 金色（平）
 }
 
 /**

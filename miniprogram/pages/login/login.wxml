@@ -3,8 +3,8 @@
   <view class="glass login-box">
     <view class="logo-section">
       <image class="logo" src="/images/logo.png" mode="aspectFit"></image>
-      <text class="app-name">基估宝</text>
-      <text class="app-desc">实时基金估值追踪</text>
+      <text class="app-name">咕咕看板</text>
+      <text class="app-desc">养鸡信息追踪</text>
     </view>
 
     <view class="login-content">
@@ -45,9 +45,7 @@
 
     <view class="login-footer">
       <text class="footer-text">登录即表示同意</text>
-      <text class="link">《用户协议》</text>
-      <text class="footer-text">和</text>
-      <text class="link">《隐私政策》</text>
+      <text class="link" bindtap="handleOpenPrivacy">《隐私政策》</text>
     </view>
   </view>
 </view>

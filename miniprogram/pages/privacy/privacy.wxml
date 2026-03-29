@@ -1,0 +1,57 @@
+<scroll-view scroll-y class="privacy-container">
+  <view class="privacy-content">
+    <text class="privacy-title">隐私政策</text>
+    <text class="privacy-update">更新日期：2026年3月1日</text>
+
+    <view class="section">
+      <text class="section-title">一、引言</text>
+      <text class="section-text">欢迎使用「咕咕看板」小程序（以下简称"本小程序"）。我们深知个人信息对您的重要性，将尽全力保护您的个人信息安全。本隐私政策适用于您通过微信小程序平台访问和使用本小程序的所有服务。</text>
+    </view>
+
+    <view class="section">
+      <text class="section-title">二、我们收集的信息</text>
+      <text class="section-text">在您使用本小程序时，我们可能会收集以下信息：</text>
+      <text class="section-text">1. 微信昵称和头像：用于个人资料展示，仅在您主动授权后获取。</text>
+      <text class="section-text">2. 微信 OpenID：用于识别用户身份，实现数据云端同步功能。</text>
+      <text class="section-text">3. 小鸡收藏列表和设置偏好：存储于本地及云端，用于提供个性化服务。</text>
+    </view>
+
+    <view class="section">
+      <text class="section-title">三、信息的使用</text>
+      <text class="section-text">我们收集的信息仅用于以下目的：</text>
+      <text class="section-text">1. 提供小鸡数据查询、口粮信息展示等核心功能。</text>
+      <text class="section-text">2. 实现多设备数据同步。</text>
+      <text class="section-text">3. 优化和改善小程序的用户体验。</text>
+      <text class="section-text">我们不会将您的个人信息出售、出租或以其他方式提供给任何第三方。</text>
+    </view>
+
+    <view class="section">
+      <text class="section-title">四、信息的存储与保护</text>
+      <text class="section-text">1. 您的小鸡列表和设置信息存储在微信本地缓存中，卸载小程序后数据将被清除。</text>
+      <text class="section-text">2. 若您启用云端同步，数据将加密存储在微信云开发环境中，受微信平台安全机制保护。</text>
+      <text class="section-text">3. 我们不会在自有服务器上存储您的任何个人信息。</text>
+    </view>
+
+    <view class="section">
+      <text class="section-title">五、第三方数据来源</text>
+      <text class="section-text">本小程序展示的数据来源于公开的第三方数据接口，仅供参考，不构成任何建议。</text>
+    </view>
+
+    <view class="section">
+      <text class="section-title">六、您的权利</text>
+      <text class="section-text">1. 您有权拒绝授权微信登录，仍可使用小程序的基础功能。</text>
+      <text class="section-text">2. 您可以随时在"我的"页面清除本地缓存数据。</text>
+      <text class="section-text">3. 您可以在微信设置中撤销对本小程序的授权。</text>
+    </view>
+
+    <view class="section">
+      <text class="section-title">七、政策更新</text>
+      <text class="section-text">我们可能会不定期更新本隐私政策。更新后的政策将在本页面发布，请您定期查阅。继续使用本小程序即表示您同意更新后的政策内容。</text>
+    </view>
+
+    <view class="section">
+      <text class="section-title">八、联系我们</text>
+      <text class="section-text">如果您对本隐私政策有任何疑问或建议，可通过小程序"我的 - 关于我们"中的联系方式与我们取得联系。</text>
+    </view>
+  </view>
+</scroll-view>

@@ -12,6 +12,19 @@ Page({
     version: '1.1.0'
   },
 
+  onShareAppMessage() {
+    return {
+      title: '咕咕看板 - 养鸡信息追踪',
+      path: '/pages/index/index'
+    };
+  },
+
+  onShareTimeline() {
+    return {
+      title: '咕咕看板 - 养鸡信息追踪'
+    };
+  },
+
   onLoad() {
     this.loadUserData();
   },
@@ -112,8 +125,8 @@ Page({
   handleClearCache() {
     wx.showModal({
       title: '清除缓存',
-      content: '确定要清除所有缓存数据吗?这将删除所有基金列表和设置。',
-      confirmColor: '#ef4444',
+      content: '确定要清除所有缓存数据吗?这将删除所有小鸡列表和设置。',
+      confirmColor: '#D4A84B',
       success: (res) => {
         if (res.confirm) {
           try {
@@ -151,8 +164,8 @@ Page({
   // 关于我们
   handleAbout() {
     wx.showModal({
-      title: '关于基估宝',
-      content: '基估宝是一款实时基金估值追踪小程序，帮助您轻松管理和追踪基金投资。\n\n新版本特性：\n- ✅ 实时估值分时图\n- ✅ 基金分组管理\n- ✅ 持仓信息展示\n\n版本: ' + this.data.version + '\n\n© 2024 基估宝团队',
+      title: '关于咕咕看板',
+      content: '咕咕看板是一款小鸡追踪小程序，帮助您轻松管理和追踪小鸡成长信息。\n\n版本: ' + this.data.version + '\n\n© 2025 咕咕看板团队',
       showCancel: false,
       confirmText: '知道了'
     });
@@ -163,7 +176,7 @@ Page({
     wx.showModal({
       title: '退出登录',
       content: '确定要退出登录吗?',
-      confirmColor: '#ef4444',
+      confirmColor: '#D4A84B',
       success: (res) => {
         if (res.confirm) {
           try {

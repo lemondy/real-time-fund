@@ -6,6 +6,65 @@ import { getIntradayChartConfig } from '../../utils/chart';
 
 const app = getApp();
 
+/**
+ * 计算前十大持仓合计占比（从 weight 字符串如 "5.66%" 求和）
+ * @param {Array} holdings - 持仓列表
+ * @returns {string|null} 如 "44.90%" 或 null
+ */
+function computeHoldingsTotalPercent(holdings) {
+  if (!holdings || holdings.length === 0) return null;
+  const total = holdings.reduce((sum, h) => {
+    const w = parseFloat(String(h.weight || '0').replace('%', '')) || 0;
+    return sum + w;
+  }, 0);
+  return total.toFixed(2) + '%';
+}
+
+/**
+ * 根据前十占比返回持股集中度提示
+ * @param {string|null} percentStr - 如 "44.90%"
+ * @returns {string}
+ */
+function getConcentrationHint(percentStr) {
+  if (!percentStr) return '';
+  const p = parseFloat(percentStr);
+  if (isNaN(p)) return '';
+  if (p < 30) return '口粮集中度较低';
+  if (p > 60) return '口粮集中度较高';
+  return '口粮集中度适中';
+}
+
+function isAfterMarketClose() {
+  const now = new Date();
+  return now.getHours() > 15 || (now.getHours() === 15 && now.getMinutes() >= 30);
+}
+
+function getTodayStr() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
+/**
+ * 15:30 后如果当日实际体重已出，用实际值替换预估值
+ */
+function computeDisplayValues(fund) {
+  const afterClose = isAfterMarketClose();
+  if (afterClose && fund.actualNav) {
+    return {
+      displayGsz: fund.actualNav,
+      displayGszzl: fund.actualNavChange,
+      displayLabel: '今日体重',
+      displayTime: fund.actualNavDate
+    };
+  }
+  return {
+    displayGsz: fund.gsz,
+    displayGszzl: fund.gszzl,
+    displayLabel: '预估体重',
+    displayTime: fund.gztime
+  };
+}
+
 Page({
   data: {
     // 搜索相关
@@ -47,6 +106,19 @@ Page({
       { value: 300, label: '5分钟' }
     ],
     refreshIntervalIndex: 1
+  },
+
+  onShareAppMessage() {
+    return {
+      title: '咕咕看板 - 养鸡信息追踪',
+      path: '/pages/index/index'
+    };
+  },
+
+  onShareTimeline() {
+    return {
+      title: '咕咕看板 - 养鸡信息追踪'
+    };
   },
 
   onLoad() {
@@ -105,12 +177,21 @@ Page({
   // 更新基金列表显示
   updateFundList(funds) {
     const favoriteCount = funds.filter(f => f.favorite).length;
-    const displayFunds = this.data.currentTab === 0 
-      ? funds 
-      : funds.filter(f => f.favorite);
+    const withHoldingsTotal = funds.map(f => {
+      const dv = computeDisplayValues(f);
+      return {
+        ...f,
+        ...dv,
+        holdingsTotalPercent: computeHoldingsTotalPercent(f.holdings),
+        holdingsConcentrationHint: getConcentrationHint(computeHoldingsTotalPercent(f.holdings))
+      };
+    });
+    const displayFunds = this.data.currentTab === 0
+      ? withHoldingsTotal
+      : withHoldingsTotal.filter(f => f.favorite);
 
     this.setData({
-      allFunds: funds,
+      allFunds: withHoldingsTotal,
       displayFunds,
       allCount: funds.length,
       favoriteCount
@@ -133,7 +214,7 @@ Page({
       return;
     }
 
-    wx.showLoading({ title: '搜索中...' });
+    wx.showLoading({ title: '找鸡中...' });
 
     try {
       const results = await searchFunds(keyword);
@@ -143,7 +224,7 @@ Page({
       console.error('搜索失败:', error);
       wx.hideLoading();
       wx.showToast({
-        title: '搜索失败',
+        title: '搜索失败，请重试',
         icon: 'none'
       });
     }
@@ -183,7 +264,7 @@ Page({
       console.error('添加基金失败:', error);
       wx.hideLoading();
       wx.showToast({
-        title: '添加失败，请重试',
+        title: '添加失败，重试一下',
         icon: 'none'
       });
     }
@@ -303,9 +384,9 @@ Page({
     const fund = this.data.allFunds.find(f => f.code === code);
 
     wx.showModal({
-      title: '删除基金',
-      content: `确定要删除 ${fund.name} 吗?`,
-      confirmColor: '#ef4444',
+      title: '移除小鸡',
+      content: `确定要移除 ${fund.name} 吗?`,
+      confirmColor: '#D4A84B',
       success: (res) => {
         if (res.confirm) {
           this.handleDelete(code);
@@ -350,7 +431,7 @@ Page({
     
     wx.showModal({
       title: fund.name,
-      content: `基金代码: ${fund.code}\n单位净值: ${fund.dwjz || '--'}\n估算净值: ${fund.gsz || '--'}\n涨跌幅: ${fund.gszzl > 0 ? '+' : ''}${fund.gszzl}%\n净值日期: ${fund.jzrq || '--'}\n更新时间: ${fund.gztime || '--'}`,
+      content: `编号: ${fund.code}\n体重: ${fund.dwjz || '--'}\n${fund.displayLabel || '预估体重'}: ${fund.displayGsz || '--'}\n增减幅: ${fund.displayGszzl > 0 ? '+' : ''}${fund.displayGszzl}%\n称重日期: ${fund.jzrq || '--'}\n更新时间: ${fund.displayTime || '--'}`,
       showCancel: false
     });
   },

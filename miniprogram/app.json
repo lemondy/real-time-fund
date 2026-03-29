@@ -5,21 +5,21 @@
     "pages/my/my"
   ],
   "window": {
-    "backgroundTextStyle": "dark",
-    "navigationBarBackgroundColor": "#667eea",
-    "navigationBarTitleText": "基估宝",
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#0A0A0A",
+    "navigationBarTitleText": "咕咕看板",
     "navigationBarTextStyle": "white",
-    "backgroundColor": "#f0f2f5"
+    "backgroundColor": "#0A0A0A"
   },
   "tabBar": {
-    "color": "#999999",
-    "selectedColor": "#667eea",
-    "backgroundColor": "#ffffff",
-    "borderStyle": "white",
+    "color": "#666666",
+    "selectedColor": "#D4A84B",
+    "backgroundColor": "#121212",
+    "borderStyle": "black",
     "list": [
       {
         "pagePath": "pages/index/index",
-        "text": "基金",
+        "text": "鸡窝",
         "iconPath": "images/fund.png",
         "selectedIconPath": "images/fund-active.png"
       },
