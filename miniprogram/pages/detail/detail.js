@@ -1,5 +1,6 @@
 // pages/detail/detail.js
 import { getFunds } from '../../utils/storage';
+import { getHolding, saveHolding, deleteHolding } from '../../utils/storage';
 import { fetchNavHistory } from '../../utils/api';
 
 // 图表内边距 (px)
@@ -37,7 +38,21 @@ Page({
     periodChange: 0,
     periodChangeStr: '--',
     periodShort: '3月',
-    crosshairInfo: null   // { date, nav, changeStr, change } | null
+    crosshairInfo: null,   // { date, nav, changeStr, change } | null
+
+    // 持仓相关
+    holdingInfo: null,     // 存储的持仓数据
+    holdingStats: null,    // 计算后的持仓统计
+    showHoldingModal: false,
+    holdingMode: 'amount', // 'amount' | 'shares'
+    holdingDateMode: 'date', // 'date' | 'days'
+    holdingForm: {
+      amount: '',
+      shares: '',
+      costPrice: '',
+      firstBuyDate: '',
+      days: ''
+    }
   },
 
   onLoad(options) {
@@ -52,6 +67,13 @@ Page({
     if (fund.gztime) {
       const m = fund.gztime.match(/(\d{4}-)?(\d{2}-\d{2})\s+(\d{2}:\d{2})/);
       this.setData({ gztimeShort: m ? `${m[2]} ${m[3]}` : fund.gztime });
+    }
+
+    // 加载持仓数据
+    const holdingInfo = getHolding(code);
+    if (holdingInfo) {
+      this.setData({ holdingInfo, holdingMode: holdingInfo.mode || 'amount' });
+      this._computeHoldingStats(holdingInfo, fund);
     }
   },
 
@@ -315,5 +337,148 @@ Page({
     });
 
     this._drawChart({ lx, ly, idx: si });
+  },
+
+  // ── 持仓功能 ─────────────────────────────────────────────────
+
+  /** 打开设置持仓弹窗 */
+  openHoldingModal() {
+    const { holdingInfo, holdingMode } = this.data;
+    const form = holdingInfo ? {
+      amount:       String(holdingInfo.amount   || ''),
+      shares:       String(holdingInfo.shares   || ''),
+      costPrice:    String(holdingInfo.costPrice || ''),
+      firstBuyDate: holdingInfo.firstBuyDate    || '',
+      days:         ''
+    } : { amount: '', shares: '', costPrice: '', firstBuyDate: '', days: '' };
+
+    this.setData({
+      showHoldingModal: true,
+      holdingMode: holdingInfo?.mode || 'amount',
+      holdingDateMode: 'date',
+      holdingForm: form
+    });
+  },
+
+  /** 关闭弹窗 */
+  closeHoldingModal() {
+    this.setData({ showHoldingModal: false });
+  },
+
+  /** 阻止点击弹窗内部时关闭 */
+  preventModalClose() {},
+
+  /** 切换按金额/按份额 */
+  switchHoldingMode(e) {
+    this.setData({ holdingMode: e.currentTarget.dataset.mode });
+  },
+
+  /** 切换日期 / 天数 输入模式 */
+  switchDateMode() {
+    const next = this.data.holdingDateMode === 'date' ? 'days' : 'date';
+    this.setData({ holdingDateMode: next });
+  },
+
+  /** 表单字段输入 */
+  onHoldingAmountInput(e)    { this.setData({ 'holdingForm.amount':    e.detail.value }); },
+  onHoldingSharesInput(e)    { this.setData({ 'holdingForm.shares':    e.detail.value }); },
+  onHoldingCostInput(e)      { this.setData({ 'holdingForm.costPrice': e.detail.value }); },
+  onHoldingDaysInput(e)      { this.setData({ 'holdingForm.days':      e.detail.value }); },
+  onFirstBuyDateChange(e)    { this.setData({ 'holdingForm.firstBuyDate': e.detail.value }); },
+
+  /** 保存持仓 */
+  saveHoldingForm() {
+    const { holdingMode, holdingDateMode, holdingForm, fund } = this.data;
+
+    // 校验必填项
+    if (holdingMode === 'amount' && !holdingForm.amount) {
+      wx.showToast({ title: '请输入持有金额', icon: 'none' }); return;
+    }
+    if (holdingMode === 'shares' && !holdingForm.shares) {
+      wx.showToast({ title: '请输入持有份额', icon: 'none' }); return;
+    }
+    if (!holdingForm.costPrice) {
+      wx.showToast({ title: '请输入持仓成本价', icon: 'none' }); return;
+    }
+
+    // 处理日期
+    let firstBuyDate = holdingForm.firstBuyDate;
+    if (holdingDateMode === 'days' && holdingForm.days) {
+      const d = new Date();
+      d.setDate(d.getDate() - parseInt(holdingForm.days || 0));
+      const pad = n => String(n).padStart(2, '0');
+      firstBuyDate = `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+    }
+
+    const info = {
+      mode:         holdingMode,
+      amount:       parseFloat(holdingForm.amount)    || null,
+      shares:       parseFloat(holdingForm.shares)    || null,
+      costPrice:    parseFloat(holdingForm.costPrice) || null,
+      firstBuyDate: firstBuyDate || null
+    };
+
+    saveHolding(fund.code, info);
+    this.setData({ holdingInfo: info, showHoldingModal: false });
+    this._computeHoldingStats(info, fund);
+    wx.showToast({ title: '保存成功', icon: 'success' });
+  },
+
+  /** 清除持仓 */
+  clearHolding() {
+    wx.showModal({
+      title: '清除持仓',
+      content: '确定要清除持仓信息吗？',
+      confirmColor: '#D4A84B',
+      success: (res) => {
+        if (res.confirm) {
+          deleteHolding(this.data.fund.code);
+          this.setData({ holdingInfo: null, holdingStats: null, showHoldingModal: false });
+        }
+      }
+    });
+  },
+
+  /**
+   * 根据持仓信息和当前净值计算市值、盈亏等
+   * @param {Object} info - 持仓信息
+   * @param {Object} fund - 基金数据
+   */
+  _computeHoldingStats(info, fund) {
+    if (!info || !fund) return;
+    const nav = parseFloat(fund.dwjz) || 0;
+    if (!nav) return;
+
+    const costPrice = parseFloat(info.costPrice) || 0;
+
+    let shares = 0;
+    if (info.mode === 'shares') {
+      shares = parseFloat(info.shares) || 0;
+    } else {
+      const amount = parseFloat(info.amount) || 0;
+      shares = costPrice > 0 ? amount / costPrice : 0;
+    }
+
+    const marketValue = shares * nav;
+    const costBasis   = shares * costPrice;
+    const pnl         = marketValue - costBasis;
+    const pnlRate     = costBasis > 0 ? pnl / costBasis * 100 : 0;
+
+    const fmt = n => {
+      const abs = Math.abs(n);
+      if (abs >= 10000) return (n / 10000).toFixed(2) + '万';
+      return n.toFixed(2);
+    };
+
+    this.setData({
+      holdingStats: {
+        shares:      shares.toFixed(2),
+        marketValue: marketValue.toFixed(2),
+        costBasis:   costBasis.toFixed(2),
+        pnl,
+        pnlStr:  fmt(pnl),
+        pnlRate: (pnlRate >= 0 ? '+' : '') + pnlRate.toFixed(2) + '%'
+      }
+    });
   }
 });

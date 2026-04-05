@@ -1,5 +1,5 @@
 <!-- pages/detail/detail.wxml -->
-<scroll-view scroll-y class="detail-container" bindscrolltolower="loadMoreHistory">
+<scroll-view scroll-y="{{!showHoldingModal}}" class="detail-container" bindscrolltolower="loadMoreHistory">
 
   <!-- 头部 -->
   <view class="detail-header glass">
@@ -12,6 +12,30 @@
         <text class="gztime-label">估值时间</text>
         <text class="gztime-value">{{gztimeShort}}</text>
       </view>
+    </view>
+
+    <!-- 持仓信息控件 -->
+    <view class="holding-row" bindtap="openHoldingModal">
+      <!-- 未设置 -->
+      <view wx:if="{{!holdingInfo}}" class="holding-unset">
+        <text class="holding-unset-text">点击设置持仓</text>
+      </view>
+      <!-- 已设置：两列数据 -->
+      <view wx:else class="holding-data">
+        <view class="holding-col">
+          <text class="holding-col-label">持仓金额</text>
+          <text class="holding-col-val">¥{{holdingStats.marketValue}}</text>
+        </view>
+        <view class="holding-col-divider" />
+        <view class="holding-col">
+          <text class="holding-col-label">累计收益</text>
+          <view class="holding-col-pnl-row">
+            <text class="holding-col-val {{holdingStats.pnl >= 0 ? 'rise' : 'fall'}}">{{holdingStats.pnl >= 0 ? '+' : ''}}{{holdingStats.pnlStr}}</text>
+            <text class="holding-col-rate {{holdingStats.pnl >= 0 ? 'rise' : 'fall'}}"> ({{holdingStats.pnlRate}})</text>
+          </view>
+        </view>
+      </view>
+      <text class="holding-gear">⚙</text>
     </view>
   </view>
 
@@ -138,3 +162,132 @@
   </view>
 
 </scroll-view>
+
+<!-- ── 设置持仓弹窗 ──────────────────────────────────────────── -->
+<view wx:if="{{showHoldingModal}}" class="modal-overlay" catchtap="closeHoldingModal" catchtouchmove="preventModalClose">
+  <view class="modal-sheet" catchtap="preventModalClose">
+
+    <!-- 弹窗头部 -->
+    <view class="modal-header">
+      <view class="mh-left">
+        <text class="modal-title-icon">⚙</text>
+        <text class="modal-title">设置持仓</text>
+      </view>
+      <view bindtap="closeHoldingModal" class="modal-close-btn"><text>×</text></view>
+    </view>
+
+    <!-- 基金信息行 -->
+    <view class="modal-fund-row">
+      <view class="mfr-left">
+        <text class="mfr-name">{{fund.name}}</text>
+        <text class="mfr-code">#{{fund.code}}</text>
+      </view>
+      <view class="mfr-right">
+        <text class="mfr-nav-lbl">最新净值:</text>
+        <text class="mfr-nav-val">{{fund.dwjz || '--'}}</text>
+      </view>
+    </view>
+
+    <!-- 模式切换 -->
+    <view class="mode-tab-bar">
+      <view
+        class="mode-tab-item {{holdingMode === 'amount' ? 'active' : ''}}"
+        bindtap="switchHoldingMode"
+        data-mode="amount"
+      ><text>按金额</text></view>
+      <view
+        class="mode-tab-item {{holdingMode === 'shares' ? 'active' : ''}}"
+        bindtap="switchHoldingMode"
+        data-mode="shares"
+      ><text>按份额</text></view>
+    </view>
+
+    <!-- 表单 -->
+    <view class="modal-form">
+
+      <!-- 按金额：持有金额 -->
+      <view wx:if="{{holdingMode === 'amount'}}" class="form-group">
+        <text class="form-label">持有金额 <text class="required">*</text></text>
+        <input
+          class="form-input"
+          type="digit"
+          placeholder="请输入持有金额（元）"
+          placeholder-class="form-placeholder"
+          value="{{holdingForm.amount}}"
+          bindinput="onHoldingAmountInput"
+        />
+      </view>
+
+      <!-- 按份额：持有份额 -->
+      <view wx:if="{{holdingMode === 'shares'}}" class="form-group">
+        <text class="form-label">持有份额 <text class="required">*</text></text>
+        <input
+          class="form-input"
+          type="digit"
+          placeholder="请输入持有份额"
+          placeholder-class="form-placeholder"
+          value="{{holdingForm.shares}}"
+          bindinput="onHoldingSharesInput"
+        />
+      </view>
+
+      <!-- 持仓成本价 -->
+      <view class="form-group">
+        <text class="form-label">持仓成本价 <text class="required">*</text></text>
+        <input
+          class="form-input"
+          type="digit"
+          placeholder="请输入持仓成本价"
+          placeholder-class="form-placeholder"
+          value="{{holdingForm.costPrice}}"
+          bindinput="onHoldingCostInput"
+        />
+      </view>
+
+      <!-- 首次买入日期 -->
+      <view class="form-group">
+        <view class="form-label-row">
+          <text class="form-label">首次买入日期</text>
+          <view class="date-mode-toggle" bindtap="switchDateMode">
+            <text class="dmt-text">⇌ {{holdingDateMode === 'date' ? '按天数' : '按日期'}}</text>
+          </view>
+        </view>
+
+        <!-- 日期选择器 -->
+        <block wx:if="{{holdingDateMode === 'date'}}">
+          <picker mode="date" value="{{holdingForm.firstBuyDate}}" bindchange="onFirstBuyDateChange">
+            <view class="date-picker-view">
+              <text class="{{holdingForm.firstBuyDate ? 'date-picker-val' : 'form-placeholder'}}">
+                {{holdingForm.firstBuyDate || '选择日期'}}
+              </text>
+              <text class="date-icon">📅</text>
+            </view>
+          </picker>
+        </block>
+
+        <!-- 天数输入 -->
+        <block wx:else>
+          <input
+            class="form-input"
+            type="number"
+            placeholder="请输入持有天数"
+            placeholder-class="form-placeholder"
+            value="{{holdingForm.days}}"
+            bindinput="onHoldingDaysInput"
+          />
+        </block>
+      </view>
+
+    </view><!-- modal-form -->
+
+    <!-- 底部操作按钮 -->
+    <view class="modal-actions">
+      <view wx:if="{{holdingInfo}}" class="btn-clear" bindtap="clearHolding">
+        <text>清除</text>
+      </view>
+      <view class="btn-cancel" bindtap="closeHoldingModal"><text>取消</text></view>
+      <view class="btn-save"   bindtap="saveHoldingForm"><text>保存</text></view>
+    </view>
+
+  </view>
+</view>

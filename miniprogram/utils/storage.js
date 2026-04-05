@@ -265,3 +265,53 @@ export const removeGroup = (groupId) => {
     return false;
   }
 };
+
+// ─────────────────────────────────────────────────────────────────
+// 持仓信息（每只基金单独存储，不污染主基金列表）
+// ─────────────────────────────────────────────────────────────────
+
+/**
+ * 保存某只基金的持仓信息
+ * @param {string} code - 基金代码
+ * @param {Object} data - { mode, amount, shares, costPrice, firstBuyDate }
+ */
+export const saveHolding = (code, data) => {
+  try {
+    const all = wx.getStorageSync('fund_holdings') || {};
+    all[code] = data;
+    wx.setStorageSync('fund_holdings', all);
+    return true;
+  } catch (e) {
+    console.error('保存持仓失败:', e);
+    return false;
+  }
+};
+
+/**
+ * 读取某只基金的持仓信息
+ * @param {string} code - 基金代码
+ * @returns {Object|null}
+ */
+export const getHolding = (code) => {
+  try {
+    const all = wx.getStorageSync('fund_holdings') || {};
+    return all[code] || null;
+  } catch (e) {
+    return null;
+  }
+};
+
+/**
+ * 删除某只基金的持仓信息
+ * @param {string} code - 基金代码
+ */
+export const deleteHolding = (code) => {
+  try {
+    const all = wx.getStorageSync('fund_holdings') || {};
+    delete all[code];
+    wx.setStorageSync('fund_holdings', all);
+    return true;
+  } catch (e) {
+    return false;
+  }
+};
