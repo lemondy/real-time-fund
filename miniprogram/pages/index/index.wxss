@@ -236,6 +236,15 @@
   flex-direction: column;
 }
 
+.fund-info-tap {
+  padding: 4rpx 0;
+  border-radius: 8rpx;
+}
+
+.fund-info-tap:active {
+  opacity: 0.7;
+}
+
 .fund-name {
   font-size: 32rpx;
   font-weight: 500;
@@ -359,6 +368,11 @@
 .holdings-header {
   margin-bottom: 16rpx;
   display: flex;
+  align-items: center;
+}
+
+.holdings-header-left {
+  display: flex;
   flex-wrap: wrap;
   align-items: baseline;
   gap: 12rpx;
@@ -380,6 +394,7 @@
   font-size: 22rpx;
   color: rgba(255, 255, 255, 0.5);
 }
+
 
 .holdings-table {
   display: flex;

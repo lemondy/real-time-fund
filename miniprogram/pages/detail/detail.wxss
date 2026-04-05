@@ -1,0 +1,351 @@
+/* pages/detail/detail.wxss */
+.detail-container {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #0A0A0A 0%, #141210 50%, #1A1510 100%);
+  padding: 20rpx 20rpx 80rpx;
+  box-sizing: border-box;
+}
+
+.glass {
+  background: rgba(212, 168, 75, 0.06);
+  border: 1rpx solid rgba(212, 168, 75, 0.12);
+  border-radius: 16rpx;
+  margin-bottom: 20rpx;
+}
+
+/* ── 头部 ─────────────────────────────────────────────────── */
+.detail-header {
+  padding: 28rpx 30rpx;
+}
+
+.header-main {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.header-left {
+  flex: 1;
+  margin-right: 20rpx;
+}
+
+.fund-name {
+  display: block;
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #FFFFFF;
+  margin-bottom: 8rpx;
+  line-height: 1.4;
+}
+
+.fund-code {
+  font-size: 24rpx;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.gztime-badge {
+  background: rgba(211, 47, 47, 0.18);
+  border: 1rpx solid rgba(211, 47, 47, 0.35);
+  border-radius: 10rpx;
+  padding: 8rpx 18rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.gztime-label {
+  font-size: 18rpx;
+  color: rgba(255, 255, 255, 0.55);
+  margin-bottom: 4rpx;
+}
+
+.gztime-value {
+  font-size: 24rpx;
+  color: #EF5350;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── 四格数据 ─────────────────────────────────────────────── */
+.stats-grid {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.stat-cell {
+  width: 50%;
+  padding: 20rpx 30rpx;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-cell:nth-child(odd) {
+  border-right: 1rpx solid rgba(212, 168, 75, 0.08);
+}
+
+.stat-cell:nth-child(1),
+.stat-cell:nth-child(2) {
+  border-bottom: 1rpx solid rgba(212, 168, 75, 0.08);
+}
+
+.stat-label {
+  font-size: 22rpx;
+  color: rgba(255, 255, 255, 0.4);
+  margin-bottom: 8rpx;
+}
+
+.stat-value {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #FFFFFF;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── 涨跌颜色 ─────────────────────────────────────────────── */
+.rise { color: #D32F2F; }
+.fall { color: #388E3C; }
+
+/* ── 通用 section ─────────────────────────────────────────── */
+.section {
+  padding: 28rpx 30rpx;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20rpx;
+}
+
+.section-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #D4A84B;
+}
+
+.section-sub {
+  font-size: 22rpx;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.period-change {
+  font-size: 24rpx;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── 重仓 2列网格 ─────────────────────────────────────────── */
+.holdings-grid {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.holding-cell {
+  width: 50%;
+  box-sizing: border-box;
+  padding: 18rpx 0;
+  border-bottom: 1rpx solid rgba(212, 168, 75, 0.06);
+  display: flex;
+  flex-direction: column;
+}
+
+.holding-cell:nth-child(odd) {
+  padding-right: 24rpx;
+  border-right: 1rpx solid rgba(212, 168, 75, 0.06);
+}
+
+.holding-cell:nth-child(even) {
+  padding-left: 24rpx;
+}
+
+.hc-name {
+  font-size: 26rpx;
+  color: #FFFFFF;
+  margin-bottom: 8rpx;
+  font-weight: 500;
+}
+
+.hc-data {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.hc-change {
+  font-size: 24rpx;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+.hc-weight {
+  font-size: 26rpx;
+  font-weight: bold;
+  color: #FFFFFF;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── 图表区 ───────────────────────────────────────────────── */
+.chart-wrap {
+  position: relative;
+  width: 100%;
+  margin-bottom: 20rpx;
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 8rpx;
+  overflow: hidden;
+}
+
+.history-canvas {
+  display: block;
+}
+
+/* 十字线信息卡 */
+.crosshair-info-card {
+  position: absolute;
+  top: 4px;
+  left: 55px;
+  background: rgba(10, 10, 10, 0.88);
+  border: 1rpx solid rgba(212, 168, 75, 0.4);
+  border-radius: 8rpx;
+  padding: 8rpx 16rpx;
+  pointer-events: none;
+}
+
+.ci-date {
+  display: block;
+  font-size: 20rpx;
+  color: rgba(255, 255, 255, 0.55);
+  margin-bottom: 4rpx;
+  font-variant-numeric: tabular-nums;
+}
+
+.ci-row {
+  display: flex;
+  align-items: baseline;
+  gap: 4rpx;
+}
+
+.ci-nav {
+  font-size: 26rpx;
+  color: #FFFFFF;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.ci-sep {
+  font-size: 22rpx;
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.ci-change {
+  font-size: 24rpx;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+/* 加载中 */
+.chart-loading {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(10, 10, 10, 0.55);
+}
+
+.chart-loading-text {
+  font-size: 24rpx;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* ── 时间段切换 ─────────────────────────────────────────────── */
+.period-tabs {
+  display: flex;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8rpx;
+  padding: 4rpx;
+  gap: 0;
+}
+
+.period-tab {
+  flex: 1;
+  height: 60rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22rpx;
+  color: rgba(255, 255, 255, 0.45);
+  border-radius: 6rpx;
+}
+
+.period-tab.active {
+  background: linear-gradient(135deg, #D4A84B 0%, #B08930 100%);
+  color: #0A0A0A;
+  font-weight: 700;
+}
+
+/* ── 历史净值表格 ─────────────────────────────────────────── */
+.history-thead {
+  display: flex;
+  padding: 12rpx 0;
+  border-bottom: 1rpx solid rgba(212, 168, 75, 0.15);
+  margin-bottom: 4rpx;
+}
+
+.th-date { flex: 5; font-size: 22rpx; color: rgba(255, 255, 255, 0.4); }
+.th-nav  { flex: 4; text-align: right; font-size: 22rpx; color: rgba(255, 255, 255, 0.4); }
+.th-change { flex: 3; text-align: right; font-size: 22rpx; color: rgba(255, 255, 255, 0.4); }
+
+.history-row {
+  display: flex;
+  align-items: center;
+  padding: 22rpx 0;
+  border-bottom: 1rpx solid rgba(212, 168, 75, 0.05);
+}
+
+.history-row:last-child { border-bottom: none; }
+
+.td-date {
+  flex: 5;
+  font-size: 26rpx;
+  color: rgba(255, 255, 255, 0.7);
+  font-variant-numeric: tabular-nums;
+}
+
+.td-nav {
+  flex: 4;
+  text-align: right;
+  font-size: 28rpx;
+  color: #FFFFFF;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+.td-change {
+  flex: 3;
+  text-align: right;
+  font-size: 26rpx;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+.empty-history {
+  padding: 40rpx 0;
+  text-align: center;
+}
+
+.empty-history text {
+  font-size: 24rpx;
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.load-more {
+  padding: 28rpx 0 8rpx;
+  text-align: center;
+}
+
+.load-more-text {
+  font-size: 24rpx;
+  color: rgba(212, 168, 75, 0.65);
+}

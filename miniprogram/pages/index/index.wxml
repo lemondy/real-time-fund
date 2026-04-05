@@ -87,12 +87,14 @@
       wx:for="{{displayFunds}}" 
       wx:key="code" 
       class="glass fund-card"
-      bindtap="showFundDetail"
-      data-fund="{{item}}"
     >
       <!-- 小鸡头部 -->
       <view class="fund-header">
-        <view class="fund-info">
+        <view
+          class="fund-info fund-info-tap"
+          bindtap="showFundDetail"
+          data-fund="{{item}}"
+        >
           <text class="fund-name">{{item.name}}</text>
           <text class="fund-code">{{item.code}}</text>
         </view>
@@ -144,9 +146,11 @@
       <!-- 口粮信息（可展开） -->
       <view wx:if="{{item.showHoldings && item.holdings && item.holdings.length > 0}}" class="holdings-section">
         <view class="holdings-header">
-          <text class="holdings-title">前十大口粮</text>
-          <text wx:if="{{item.holdingsTotalPercent}}" class="holdings-total">占比{{item.holdingsTotalPercent}}</text>
-          <text wx:if="{{item.holdingsConcentrationHint}}" class="holdings-hint">{{item.holdingsConcentrationHint}}</text>
+          <view class="holdings-header-left">
+            <text class="holdings-title">前十大口粮</text>
+            <text wx:if="{{item.holdingsTotalPercent}}" class="holdings-total">占比{{item.holdingsTotalPercent}}</text>
+            <text wx:if="{{item.holdingsConcentrationHint}}" class="holdings-hint">{{item.holdingsConcentrationHint}}</text>
+          </view>
         </view>
         <view class="holdings-table">
           <view class="holdings-thead">

@@ -425,15 +425,10 @@ Page({
     this.loadFunds();
   },
 
-  // 显示基金详情
+  // 跳转基金详情页
   showFundDetail(e) {
     const fund = e.currentTarget.dataset.fund;
-    
-    wx.showModal({
-      title: fund.name,
-      content: `编号: ${fund.code}\n体重: ${fund.dwjz || '--'}\n${fund.displayLabel || '预估体重'}: ${fund.displayGsz || '--'}\n增减幅: ${fund.displayGszzl > 0 ? '+' : ''}${fund.displayGszzl}%\n称重日期: ${fund.jzrq || '--'}\n更新时间: ${fund.displayTime || '--'}`,
-      showCancel: false
-    });
+    wx.navigateTo({ url: `/pages/detail/detail?code=${fund.code}` });
   },
 
   // 显示设置弹窗

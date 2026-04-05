@@ -1,0 +1,140 @@
+<!-- pages/detail/detail.wxml -->
+<scroll-view scroll-y class="detail-container" bindscrolltolower="loadMoreHistory">
+
+  <!-- 头部 -->
+  <view class="detail-header glass">
+    <view class="header-main">
+      <view class="header-left">
+        <text class="fund-name">{{fund.name || '--'}}</text>
+        <text class="fund-code">#{{fund.code}}</text>
+      </view>
+      <view wx:if="{{fund.gztime}}" class="gztime-badge">
+        <text class="gztime-label">估值时间</text>
+        <text class="gztime-value">{{gztimeShort}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 四格数据 -->
+  <view class="stats-grid glass">
+    <view class="stat-cell">
+      <text class="stat-label">体重</text>
+      <text class="stat-value">{{fund.dwjz || '--'}}</text>
+    </view>
+    <view class="stat-cell">
+      <text class="stat-label">昨日涨幅</text>
+      <text class="stat-value {{yesterdayChangeStr && yesterdayChangeStr[0] === '+' ? 'rise' : yesterdayChangeStr && yesterdayChangeStr[0] === '-' ? 'fall' : ''}}">
+        {{yesterdayChangeStr}}
+      </text>
+    </view>
+    <view class="stat-cell">
+      <text class="stat-label">预估体重</text>
+      <text class="stat-value {{fund.gszzl > 0 ? 'rise' : fund.gszzl < 0 ? 'fall' : ''}}">{{fund.gsz || '--'}}</text>
+    </view>
+    <view class="stat-cell">
+      <text class="stat-label">预估涨幅</text>
+      <text class="stat-value {{fund.gszzl > 0 ? 'rise' : fund.gszzl < 0 ? 'fall' : ''}}">
+        {{fund.gszzl > 0 ? '+' : ''}}{{fund.gszzl}}%
+      </text>
+    </view>
+  </view>
+
+  <!-- 前10重仓 -->
+  <view wx:if="{{fund.holdings && fund.holdings.length > 0}}" class="section glass">
+    <view class="section-header">
+      <text class="section-title">前10重仓股票</text>
+      <text class="section-sub">涨跌幅 / 占比</text>
+    </view>
+    <view class="holdings-grid">
+      <view wx:for="{{fund.holdings}}" wx:key="code" class="holding-cell">
+        <text class="hc-name">{{item.name}}</text>
+        <view class="hc-data">
+          <text class="hc-change {{item.change > 0 ? 'rise' : item.change < 0 ? 'fall' : ''}}">
+            {{item.change != null ? (item.change > 0 ? '+' : '') + item.change + '%' : '--'}}
+          </text>
+          <text class="hc-weight">{{item.weight || '--'}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 业绩走势 -->
+  <view class="section glass">
+    <view class="section-header">
+      <text class="section-title">业绩走势</text>
+      <text class="period-change {{periodChange >= 0 ? 'rise' : 'fall'}}">
+        近{{periodShort}}涨跌幅 {{periodChange >= 0 ? '+' : ''}}{{periodChangeStr}}
+      </text>
+    </view>
+
+    <!-- 图表容器 -->
+    <view class="chart-wrap">
+      <!-- 基础折线图 canvas -->
+      <canvas
+        canvas-id="historyChart"
+        class="history-canvas"
+        style="width:{{chartWidth}}px;height:200px;"
+        catchtouchstart="onChartTouchStart"
+        catchtouchmove="onChartTouchMove"
+        catchtouchend="onChartTouchEnd"
+      ></canvas>
+
+      <!-- 十字线信息卡（浮在图表左上角） -->
+      <view wx:if="{{crosshairInfo}}" class="crosshair-info-card">
+        <text class="ci-date">{{crosshairInfo.date}}</text>
+        <view class="ci-row">
+          <text class="ci-nav">{{crosshairInfo.nav}}</text>
+          <text class="ci-sep"> · </text>
+          <text class="ci-change {{crosshairInfo.change >= 0 ? 'rise' : 'fall'}}">{{crosshairInfo.changeStr}}</text>
+        </view>
+      </view>
+
+      <view wx:if="{{loading}}" class="chart-loading">
+        <text class="chart-loading-text">加载中...</text>
+      </view>
+    </view>
+
+    <!-- 时间段切换 -->
+    <view class="period-tabs">
+      <view
+        wx:for="{{periods}}"
+        wx:key="value"
+        class="period-tab {{currentPeriod === item.value ? 'active' : ''}}"
+        bindtap="switchPeriod"
+        data-period="{{item.value}}"
+      >
+        <text>{{item.label}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 历史净值表格 -->
+  <view class="section glass">
+    <view class="section-header">
+      <text class="section-title">历史净值</text>
+    </view>
+    <view class="history-thead">
+      <text class="th-date">日期</text>
+      <text class="th-nav">净值</text>
+      <text class="th-change">日涨幅</text>
+    </view>
+    <view wx:for="{{historyList}}" wx:key="date" class="history-row">
+      <text class="td-date">{{item.date}}</text>
+      <text class="td-nav">{{item.nav}}</text>
+      <text class="td-change {{item.change > 0 ? 'rise' : item.change < 0 ? 'fall' : ''}}">
+        {{item.change != null ? (item.change > 0 ? '+' : '') + item.change + '%' : '--'}}
+      </text>
+    </view>
+    <view wx:if="{{historyList.length === 0 && !loading}}" class="empty-history">
+      <text>暂无历史数据</text>
+    </view>
+    <view
+      wx:if="{{historyAll.length > historyList.length}}"
+      class="load-more"
+      bindtap="loadMoreHistory"
+    >
+      <text class="load-more-text">加载更多历史净值</text>
+    </view>
+  </view>
+
+</scroll-view>

@@ -347,6 +347,186 @@ export const fetchFullFundData = async (code) => {
   }
 };
 
+// ─────────────────────────────────────────────────────────────────
+// 历史净值：pingzhongdata 优先，失败时自动降级到分页 F10DataApi
+// ─────────────────────────────────────────────────────────────────
+
+/**
+ * 主入口：获取历史净值列表
+ * @param {string} code  - 基金代码
+ * @param {number} days  - 向前追溯的自然天数（9999 = 成立来）
+ * @returns {Promise<Array>} [{date, nav, totalNav, change}] 从新到旧
+ */
+export const fetchNavHistory = async (code, days = 40) => {
+  // 方案 A：pingzhongdata.js（全量一次拿完，客户端按日期过滤）
+  const listA = await _fetchPingzhong(code, days);
+  if (listA.length > 0) {
+    console.log(`[NavHistory] pingzhongdata OK, ${listA.length} records`);
+    return listA;
+  }
+  // 方案 B：分页 F10DataApi（per=49 翻页）
+  console.log('[NavHistory] pingzhongdata empty/fail, fallback to F10DataApi pagination');
+  return _fetchF10Paged(code, days);
+};
+
+/** 方案 A：从 pingzhongdata.js 解析 Data_netWorthTrend */
+const _fetchPingzhong = (code, days) => new Promise((resolve) => {
+  wx.request({
+    url: `https://fund.eastmoney.com/pingzhongdata/${code}.js?v=${Date.now()}`,
+    method: 'GET',
+    dataType: 'text',
+    responseType: 'text',
+    success: (res) => {
+      try {
+        const text = typeof res.data === 'string' ? res.data : '';
+        if (text.length < 200) { console.warn('[Pingzhong] response too short:', text.length); resolve([]); return; }
+
+        // 用深度匹配找到 Data_netWorthTrend 数组边界（处理任意换行/空格）
+        const keyIdx = text.indexOf('Data_netWorthTrend');
+        if (keyIdx === -1) { console.warn('[Pingzhong] key not found'); resolve([]); return; }
+        const arrOpen = text.indexOf('[', keyIdx);
+        if (arrOpen === -1) { resolve([]); return; }
+
+        let depth = 0, arrClose = -1;
+        for (let i = arrOpen; i < text.length; i++) {
+          if (text[i] === '[') depth++;
+          else if (text[i] === ']') { if (--depth === 0) { arrClose = i; break; } }
+        }
+        if (arrClose === -1) { console.warn('[Pingzhong] unmatched ['); resolve([]); return; }
+
+        const rawArr = text.substring(arrOpen, arrClose + 1);
+
+        // JS 对象 key → JSON 规范（处理 undefined/NaN）
+        const jsonStr = rawArr
+          .replace(/([{,]\s*)([a-zA-Z_]\w*)\s*:/g, '$1"$2":')
+          .replace(/:undefined\b/g, ':null')
+          .replace(/:NaN\b/g, ':null');
+
+        const trend = JSON.parse(jsonStr);
+        if (!Array.isArray(trend) || !trend.length) { resolve([]); return; }
+
+        const nowMs = Date.now();
+        const startMs = days >= 9000 ? 0 : nowMs - days * 86400000;
+
+        const fmtTs = ts => {
+          const d = new Date(ts + 8 * 3600000); // UTC+8
+          return `${d.getUTCFullYear()}-${String(d.getUTCMonth()+1).padStart(2,'0')}-${String(d.getUTCDate()).padStart(2,'0')}`;
+        };
+
+        const validAll = trend
+          .filter(d => typeof d.x === 'number' && Number.isFinite(parseFloat(d.y)))
+          .sort((a, b) => a.x - b.x);
+
+        // 起始日若无数据（周末/节假日），向前取最近交易日作为基准
+        let effectiveStart = startMs;
+        if (days < 9000) {
+          const hasOnDay = validAll.some(d => d.x >= startMs && d.x < startMs + 86400000);
+          if (!hasOnDay) {
+            const last = [...validAll].reverse().find(d => d.x < startMs);
+            if (last) effectiveStart = last.x;
+          }
+        }
+
+        const filtered = validAll.filter(d => d.x >= effectiveStart && d.x <= nowMs + 86400000);
+        if (!filtered.length) { resolve([]); return; }
+
+        const records = filtered.map((d, i) => {
+          const nav = parseFloat(d.y) || 0;
+          let change = null;
+          if (i > 0) {
+            const prev = parseFloat(filtered[i - 1].y) || 0;
+            if (prev > 0) change = parseFloat(((nav - prev) / prev * 100).toFixed(2));
+          }
+          return { date: fmtTs(d.x), nav, totalNav: nav, change };
+        });
+
+        resolve(records.reverse()); // 从新到旧
+      } catch (e) {
+        console.error('[Pingzhong] parse error:', e.message);
+        resolve([]);
+      }
+    },
+    fail: (err) => { console.error('[Pingzhong] request fail:', JSON.stringify(err)); resolve([]); }
+  });
+});
+
+/** 方案 B：分页请求 F10DataApi（per=49，读 pages 字段翻页） */
+const _fetchF10Paged = async (code, days) => {
+  const pad = n => String(n).padStart(2, '0');
+  const fmtD = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+  const now = new Date();
+  const edate = fmtD(now);
+  let sdate = '';
+  if (days < 9000) {
+    const s = new Date(now);
+    s.setDate(s.getDate() - days);
+    sdate = fmtD(s);
+  }
+
+  const per = 49;
+  let allRows = [];
+  let page = 1;
+  let totalPages = 1;
+
+  do {
+    const { rows, pages } = await _f10Page(code, page, per, sdate, edate);
+    allRows = allRows.concat(rows);
+    totalPages = pages;
+    page++;
+  } while (page <= totalPages && page <= 40); // 最多 40 页 ≈ 1960 条
+
+  console.log(`[F10Paged] fetched ${allRows.length} rows over ${page - 1} pages`);
+
+  // 计算日涨幅（数据已是从新到旧，相邻差 = 当日 vs 前一日）
+  return allRows.map((d, i) => ({
+    ...d,
+    totalNav: d.nav,
+    change: i < allRows.length - 1
+      ? parseFloat(((d.nav - allRows[i + 1].nav) / allRows[i + 1].nav * 100).toFixed(2))
+      : null
+  }));
+};
+
+const _f10Page = (code, page, per, sdate, edate) => new Promise((resolve) => {
+  const url = `http://fund.eastmoney.com/f10/F10DataApi.aspx?type=lsjz&code=${code}&page=${page}&per=${per}&sdate=${sdate}&edate=${edate}&rt=${Math.random()}`;
+  wx.request({
+    url,
+    method: 'GET',
+    dataType: 'text',
+    responseType: 'text',
+    success: (res) => {
+      try {
+        const text = res.data || '';
+        const pagesM = text.match(/pages:(\d+)/);
+        const pages = pagesM ? parseInt(pagesM[1]) : 1;
+        const cntM = text.match(/content:"((?:[^"\\]|\\[\s\S])*)"/);
+        const html = cntM ? cntM[1].replace(/\\"/g, '"').replace(/\\\\/g, '\\') : '';
+        const rows = _parseF10Html(html);
+        resolve({ rows, pages });
+      } catch (e) {
+        resolve({ rows: [], pages: 1 });
+      }
+    },
+    fail: () => resolve({ rows: [], pages: 1 })
+  });
+});
+
+const _parseF10Html = (html) => {
+  const out = [];
+  const trParts = html.split('<tr>');
+  for (const part of trParts) {
+    const cells = part.match(/<td[^>]*>([\s\S]*?)<\/td>/g);
+    if (!cells || cells.length < 2) continue;
+    const dateStr = cells[0].replace(/<[^>]+>/g, '').replace(/&nbsp;/g, '').trim();
+    const navStr  = cells[1].replace(/<[^>]+>/g, '').trim();
+    const nav = parseFloat(navStr);
+    if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr) && !isNaN(nav)) {
+      out.push({ date: dateStr, nav });
+    }
+  }
+  return out; // 从新到旧（API 默认排序）
+};
+
 /**
  * 搜索基金
  * @param {string} keyword - 搜索关键词
