@@ -98,33 +98,59 @@
 
 .stats-section {
   margin-bottom: 20rpx;
-  padding: 40rpx;
-  display: flex;
-  justify-content: space-around;
+  padding: 32rpx 40rpx;
 }
 
-.stat-item {
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+}
+
+.stats-row-divider {
+  grid-column: 1 / -1;
+  height: 1rpx;
+  background: rgba(212, 168, 75, 0.1);
+  margin: 28rpx 0;
+}
+
+.stat-cell {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  gap: 10rpx;
+  padding-right: 24rpx;
+  border-right: 1rpx solid rgba(212, 168, 75, 0.1);
 }
 
-.stat-value {
-  font-size: 48rpx;
-  font-weight: bold;
+.stat-cell-right {
+  padding-right: 0;
+  padding-left: 32rpx;
+  border-right: none;
+  align-items: flex-end;
+}
+
+.stat-cell-label {
+  font-size: 22rpx;
+  color: rgba(255, 255, 255, 0.42);
+}
+
+.stat-cell-value {
+  font-size: 36rpx;
+  font-weight: 600;
+  color: #FFFFFF;
+  font-variant-numeric: tabular-nums;
+}
+
+.stat-cell-value.gold {
   color: #D4A84B;
-  margin-bottom: 8rpx;
 }
 
-.stat-label {
-  font-size: 24rpx;
-  color: rgba(255, 255, 255, 0.55);
+.stat-cell-value.rise {
+  color: #D32F2F;
 }
 
-.divider {
-  width: 2rpx;
-  height: 80rpx;
-  background: rgba(212, 168, 75, 0.15);
+.stat-cell-value.fall {
+  color: #388E3C;
 }
 
 .menu-section {

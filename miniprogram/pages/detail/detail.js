@@ -362,7 +362,29 @@ Page({
 
   /** 关闭弹窗 */
   closeHoldingModal() {
-    this.setData({ showHoldingModal: false });
+    this.setData({ showHoldingModal: false }, () => {
+      this._redrawAfterModalClose();
+    });
+  },
+
+  /** canvas 由 wx:if 重新挂载后，重新查询宽度再绘图，确保坐标正确 */
+  _redrawAfterModalClose() {
+    if (!this._data || !this._data.length) return;
+    // 用 setTimeout 保证 canvas 节点完成布局后再操作（nextTick 不够）
+    setTimeout(() => {
+      const query = wx.createSelectorQuery();
+      query.select('.chart-wrap').boundingClientRect();
+      query.exec(res => {
+        if (res && res[0] && res[0].width > 0) {
+          this._cw = Math.floor(res[0].width);
+          this.setData({ chartWidth: this._cw }, () => {
+            this._drawChart(null);
+          });
+        } else {
+          this._drawChart(null);
+        }
+      });
+    }, 100);
   },
 
   /** 阻止点击弹窗内部时关闭 */
@@ -392,13 +414,13 @@ Page({
 
     // 校验必填项
     if (holdingMode === 'amount' && !holdingForm.amount) {
-      wx.showToast({ title: '请输入持有金额', icon: 'none' }); return;
+      wx.showToast({ title: '请输入购鸡费用', icon: 'none' }); return;
     }
     if (holdingMode === 'shares' && !holdingForm.shares) {
-      wx.showToast({ title: '请输入持有份额', icon: 'none' }); return;
+      wx.showToast({ title: '请输入持有只数', icon: 'none' }); return;
     }
     if (!holdingForm.costPrice) {
-      wx.showToast({ title: '请输入持仓成本价', icon: 'none' }); return;
+      wx.showToast({ title: '请输入养殖成本', icon: 'none' }); return;
     }
 
     // 处理日期
@@ -419,7 +441,9 @@ Page({
     };
 
     saveHolding(fund.code, info);
-    this.setData({ holdingInfo: info, showHoldingModal: false });
+    this.setData({ holdingInfo: info, showHoldingModal: false }, () => {
+      this._redrawAfterModalClose();
+    });
     this._computeHoldingStats(info, fund);
     wx.showToast({ title: '保存成功', icon: 'success' });
   },
@@ -433,7 +457,9 @@ Page({
       success: (res) => {
         if (res.confirm) {
           deleteHolding(this.data.fund.code);
-          this.setData({ holdingInfo: null, holdingStats: null, showHoldingModal: false });
+          this.setData({ holdingInfo: null, holdingStats: null, showHoldingModal: false }, () => {
+            this._redrawAfterModalClose();
+          });
         }
       }
     });

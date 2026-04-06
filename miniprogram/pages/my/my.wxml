@@ -23,21 +23,35 @@
     </view>
   </view>
 
-  <!-- 数据统计 -->
+  <!-- 数据统计 2×2 -->
   <view class="glass stats-section">
-    <view class="stat-item">
-      <text class="stat-value">{{fundCount}}</text>
-      <text class="stat-label">关注小鸡</text>
-    </view>
-    <view class="divider"></view>
-    <view class="stat-item">
-      <text class="stat-value">{{favoriteCount}}</text>
-      <text class="stat-label">收藏小鸡</text>
-    </view>
-    <view class="divider"></view>
-    <view class="stat-item">
-      <text class="stat-value">{{totalValue}}</text>
-      <text class="stat-label">预估总重(元)</text>
+    <view class="stats-grid">
+      <!-- 养鸡总投入 -->
+      <view class="stat-cell">
+        <text class="stat-cell-label">养鸡总投入(元)</text>
+        <text class="stat-cell-value">{{hasPnlData ? totalCost : '--'}}</text>
+      </view>
+      <!-- 关注数 -->
+      <view class="stat-cell stat-cell-right">
+        <text class="stat-cell-label">关注小鸡</text>
+        <text class="stat-cell-value gold">{{fundCount}}</text>
+      </view>
+      <!-- 分隔线 -->
+      <view class="stats-row-divider"></view>
+      <!-- 今日产蛋 -->
+      <view class="stat-cell">
+        <text class="stat-cell-label">今日产蛋(元)</text>
+        <text class="stat-cell-value {{hasPnlData ? (todayPnl >= 0 ? 'rise' : 'fall') : ''}}">
+          {{hasPnlData ? todayPnlStr : '--'}}
+        </text>
+      </view>
+      <!-- 投养回报率 -->
+      <view class="stat-cell stat-cell-right">
+        <text class="stat-cell-label">投养回报率</text>
+        <text class="stat-cell-value {{hasPnlData ? (totalPnl >= 0 ? 'rise' : 'fall') : ''}}">
+          {{hasPnlData ? totalPnlRateStr : '--'}}
+        </text>
+      </view>
     </view>
   </view>
 

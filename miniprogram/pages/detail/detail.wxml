@@ -23,12 +23,12 @@
       <!-- 已设置：两列数据 -->
       <view wx:else class="holding-data">
         <view class="holding-col">
-          <text class="holding-col-label">持仓金额</text>
+          <text class="holding-col-label">鸡场总价值</text>
           <text class="holding-col-val">¥{{holdingStats.marketValue}}</text>
         </view>
         <view class="holding-col-divider" />
         <view class="holding-col">
-          <text class="holding-col-label">累计收益</text>
+          <text class="holding-col-label">累计产蛋</text>
           <view class="holding-col-pnl-row">
             <text class="holding-col-val {{holdingStats.pnl >= 0 ? 'rise' : 'fall'}}">{{holdingStats.pnl >= 0 ? '+' : ''}}{{holdingStats.pnlStr}}</text>
             <text class="holding-col-rate {{holdingStats.pnl >= 0 ? 'rise' : 'fall'}}"> ({{holdingStats.pnlRate}})</text>
@@ -91,10 +91,11 @@
       </text>
     </view>
 
-    <!-- 图表容器 -->
+    <!-- 图表容器（弹窗打开时卸载 canvas，避免原生层穿透遮罩） -->
     <view class="chart-wrap">
       <!-- 基础折线图 canvas -->
       <canvas
+        wx:if="{{!showHoldingModal}}"
         canvas-id="historyChart"
         class="history-canvas"
         style="width:{{chartWidth}}px;height:200px;"
@@ -205,39 +206,39 @@
     <!-- 表单 -->
     <view class="modal-form">
 
-      <!-- 按金额：持有金额 -->
+      <!-- 按金额：购鸡费用 -->
       <view wx:if="{{holdingMode === 'amount'}}" class="form-group">
-        <text class="form-label">持有金额 <text class="required">*</text></text>
+        <text class="form-label">购鸡费用 <text class="required">*</text></text>
         <input
           class="form-input"
           type="digit"
-          placeholder="请输入持有金额（元）"
+          placeholder="请输入购鸡费用（元）"
           placeholder-class="form-placeholder"
           value="{{holdingForm.amount}}"
           bindinput="onHoldingAmountInput"
         />
       </view>
 
-      <!-- 按份额：持有份额 -->
+      <!-- 按份额：持有只数 -->
       <view wx:if="{{holdingMode === 'shares'}}" class="form-group">
-        <text class="form-label">持有份额 <text class="required">*</text></text>
+        <text class="form-label">持有只数 <text class="required">*</text></text>
         <input
           class="form-input"
           type="digit"
-          placeholder="请输入持有份额"
+          placeholder="请输入持有只数"
           placeholder-class="form-placeholder"
           value="{{holdingForm.shares}}"
           bindinput="onHoldingSharesInput"
         />
       </view>
 
-      <!-- 持仓成本价 -->
+      <!-- 养殖成本 -->
       <view class="form-group">
-        <text class="form-label">持仓成本价 <text class="required">*</text></text>
+        <text class="form-label">养殖成本 <text class="required">*</text></text>
         <input
           class="form-input"
           type="digit"
-          placeholder="请输入持仓成本价"
+          placeholder="请输入养殖成本（每只购入价）"
           placeholder-class="form-placeholder"
           value="{{holdingForm.costPrice}}"
           bindinput="onHoldingCostInput"

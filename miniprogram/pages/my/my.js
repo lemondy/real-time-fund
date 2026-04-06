@@ -7,8 +7,13 @@ Page({
     userInfo: null,
     openid: '',
     fundCount: 0,
-    favoriteCount: 0,
-    totalValue: '0.00',
+    // 持仓汇总
+    hasPnlData: false,
+    totalCost: '0.00',
+    todayPnl: 0,
+    todayPnlStr: '--',
+    totalPnl: 0,
+    totalPnlRateStr: '--',
     version: '1.1.0'
   },
 
@@ -46,24 +51,59 @@ Page({
     });
   },
 
-  // 加载基金统计数据
+  // 加载基金统计数据（含持仓汇总）
   loadFundStats() {
     try {
       const funds = wx.getStorageSync('funds') || [];
-      const favorites = funds.filter(fund => fund.favorite);
-      
-      // 计算总估值
-      let totalValue = 0;
+      const allHoldings = wx.getStorageSync('fund_holdings') || {};
+
+      let totalCost = 0;
+      let totalMarketValue = 0;
+      let totalTodayPnl = 0;
+      let hasHolding = false;
+
       funds.forEach(fund => {
-        if (fund.estValue) {
-          totalValue += parseFloat(fund.estValue) || 0;
+        const holding = allHoldings[fund.code];
+        if (!holding) return;
+
+        const nav = parseFloat(fund.dwjz) || 0;
+        if (nav === 0) return;
+
+        // 计算份额与成本
+        let shares = 0;
+        let cost = 0;
+        if (holding.mode === 'amount') {
+          const costPrice = parseFloat(holding.costPrice) || nav;
+          shares = (parseFloat(holding.amount) || 0) / costPrice;
+          cost = parseFloat(holding.amount) || 0;
+        } else {
+          shares = parseFloat(holding.shares) || 0;
+          const costPrice = parseFloat(holding.costPrice) || nav;
+          cost = shares * costPrice;
         }
+
+        const marketValue = shares * nav;
+        totalCost += cost;
+        totalMarketValue += marketValue;
+
+        // 今日产蛋：份额 × 最新净值 × 估算日涨跌幅
+        const gszzl = parseFloat(fund.gszzl) || 0;
+        totalTodayPnl += marketValue * gszzl / 100;
+
+        hasHolding = true;
       });
+
+      const totalPnl = totalMarketValue - totalCost;
+      const totalPnlRate = totalCost > 0 ? totalPnl / totalCost * 100 : 0;
 
       this.setData({
         fundCount: funds.length,
-        favoriteCount: favorites.length,
-        totalValue: totalValue.toFixed(2)
+        hasPnlData: hasHolding,
+        totalCost: totalCost.toFixed(2),
+        todayPnl: totalTodayPnl,
+        todayPnlStr: (totalTodayPnl >= 0 ? '+' : '') + totalTodayPnl.toFixed(2),
+        totalPnl,
+        totalPnlRateStr: (totalPnlRate >= 0 ? '+' : '') + totalPnlRate.toFixed(2) + '%'
       });
     } catch (error) {
       console.error('加载统计数据失败:', error);
