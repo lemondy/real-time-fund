@@ -39,27 +39,31 @@
     </view>
   </view>
 
-  <!-- 四格数据 -->
+  <!-- 四格数据（每行左右列标签/数值区统一高度对齐） -->
   <view class="stats-grid glass">
-    <view class="stat-cell">
-      <text class="stat-label">体重</text>
-      <text class="stat-value">{{fund.dwjz || '--'}}</text>
+    <view class="stats-row">
+      <view class="stat-cell">
+        <view class="stat-label-wrap"><text class="stat-label">体重</text></view>
+        <text class="stat-value">{{fund.dwjz || '--'}}</text>
+      </view>
+      <view class="stat-cell">
+        <view class="stat-label-wrap"><text class="stat-label">昨日涨幅</text></view>
+        <text class="stat-value {{yesterdayChangeStr && yesterdayChangeStr[0] === '+' ? 'rise' : yesterdayChangeStr && yesterdayChangeStr[0] === '-' ? 'fall' : ''}}">
+          {{yesterdayChangeStr}}
+        </text>
+      </view>
     </view>
-    <view class="stat-cell">
-      <text class="stat-label">昨日涨幅</text>
-      <text class="stat-value {{yesterdayChangeStr && yesterdayChangeStr[0] === '+' ? 'rise' : yesterdayChangeStr && yesterdayChangeStr[0] === '-' ? 'fall' : ''}}">
-        {{yesterdayChangeStr}}
-      </text>
-    </view>
-    <view class="stat-cell">
-      <text class="stat-label">预估体重</text>
-      <text class="stat-value {{fund.gszzl > 0 ? 'rise' : fund.gszzl < 0 ? 'fall' : ''}}">{{fund.gsz || '--'}}</text>
-    </view>
-    <view class="stat-cell">
-      <text class="stat-label">预估涨幅</text>
-      <text class="stat-value {{fund.gszzl > 0 ? 'rise' : fund.gszzl < 0 ? 'fall' : ''}}">
-        {{fund.gszzl > 0 ? '+' : ''}}{{fund.gszzl}}%
-      </text>
+    <view class="stats-row">
+      <view class="stat-cell">
+        <view class="stat-label-wrap"><text class="stat-label">预估体重</text></view>
+        <text class="stat-value {{fund.gszzl > 0 ? 'rise' : fund.gszzl < 0 ? 'fall' : ''}}">{{fund.gsz || '--'}}</text>
+      </view>
+      <view class="stat-cell">
+        <view class="stat-label-wrap"><text class="stat-label">预估涨幅</text></view>
+        <text class="stat-value {{fund.gszzl > 0 ? 'rise' : fund.gszzl < 0 ? 'fall' : ''}}">
+          {{fund.gszzl > 0 ? '+' : ''}}{{fund.gszzl}}%
+        </text>
+      </view>
     </view>
   </view>
 

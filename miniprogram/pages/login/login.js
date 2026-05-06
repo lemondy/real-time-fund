@@ -1,4 +1,5 @@
 // pages/login/login.js
+import { syncAllFromLocal } from '../../utils/cloud-sync';
 const app = getApp();
 
 Page({
@@ -83,8 +84,16 @@ Page({
         // 再进行微信登录获取 openid
         console.log('开始调用 wx.login 获取 openid...');
         app.wxLogin()
-          .then(() => {
+          .then(async () => {
             console.log('✅ 微信登录成功');
+
+            // 登录后自动尝试同步本地关注/收藏/持仓到云端（未配置 serverUrl 时自动跳过）
+            try {
+              await syncAllFromLocal();
+            } catch (syncError) {
+              console.warn('登录后自动同步失败:', syncError);
+            }
+
             wx.showToast({
               title: '登录成功',
               icon: 'success'

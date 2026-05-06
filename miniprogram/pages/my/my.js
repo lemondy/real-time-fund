@@ -1,4 +1,5 @@
 // pages/my/my.js
+import { syncAllFromLocal } from '../../utils/cloud-sync';
 const app = getApp();
 
 Page({
@@ -140,7 +141,7 @@ Page({
   },
 
   // 数据同步
-  handleSync() {
+  async handleSync() {
     if (!this.data.hasUserInfo) {
       wx.showToast({
         title: '请先登录',
@@ -151,14 +152,21 @@ Page({
 
     wx.showLoading({ title: '同步中...' });
 
-    // 模拟同步
-    setTimeout(() => {
+    try {
+      const result = await syncAllFromLocal();
       wx.hideLoading();
       wx.showToast({
-        title: '同步成功',
+        title: result?.skipped ? '未配置云端地址' : '同步成功',
         icon: 'success'
       });
-    }, 1500);
+    } catch (error) {
+      wx.hideLoading();
+      wx.showToast({
+        title: '同步失败',
+        icon: 'none'
+      });
+      console.error('同步失败:', error);
+    }
   },
 
   // 清除缓存
